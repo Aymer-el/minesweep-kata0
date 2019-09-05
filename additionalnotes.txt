@@ -1,0 +1,3 @@
+
+The project may need ton add linter and/or contribute to:
+    https://github.com/othree/eslint-config-ostandard

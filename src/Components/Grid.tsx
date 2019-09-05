@@ -35,6 +35,11 @@ export const Grid: React.FunctionComponent = () => {
                         onclick={(ev: MouseEvent) =>
                             handleClick(index, ev.button)
                         }
+                        isCellOddColor={
+                            (Math.floor(index / 10) + 1 + index) % 2 == 0
+                                ? false
+                                : true
+                        }
                     />
                 ))}
             </div>
