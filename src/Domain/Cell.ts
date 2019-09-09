@@ -35,6 +35,10 @@ export class Cell {
         return this._bomb && this.dug;
     }
 
+    get bomb(): boolean {
+        return this._bomb;
+    }
+
     get flagged(): boolean {
         return this._flagged;
     }
