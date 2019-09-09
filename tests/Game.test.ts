@@ -12,11 +12,17 @@ describe('Rules', () => {
     test('a game is lost if a cell with a bomb has been dug', () => {
         const cellWithBomb = Cell.withBomb();
         const grid = new Grid(1, [cellWithBomb]);
+
         expect(isDefeated(grid)).toBe(false);
         expect(isVictorious(grid)).toBe(false);
 
         const gridDetonated = grid.sendActionToCell(0, 'dig');
-
+        let newCellWithBomb = gridDetonated.cellByIndex(0);
+        if (!newCellWithBomb) {
+            newCellWithBomb = new Cell(true, false, false);
+        }
+        expect(newCellWithBomb.dug).toBe(true);
+        expect(newCellWithBomb.status).toBe('detonated');
         expect(isDefeated(gridDetonated)).toBe(true);
         expect(isVictorious(gridDetonated)).toBe(false);
     });
