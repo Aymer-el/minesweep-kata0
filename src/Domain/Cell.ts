@@ -5,9 +5,12 @@ export class Cell {
     private _bomb: boolean;
     private _flagged: boolean;
     private _dug: boolean;
+    private _minesAround: number = 0;
 
     static withBomb(): Cell {
-        return new Cell(true, false, false);
+        const cell = new Cell(true, false, false);
+        cell.incMinesAround();
+        return cell;
     }
 
     static withoutBomb(): Cell {
@@ -36,6 +39,9 @@ export class Cell {
     }
 
     get bomb(): boolean {
+        if (!this.minesAround() && this._bomb) {
+            this.incMinesAround();
+        }
         return this._bomb;
     }
 
@@ -58,5 +64,19 @@ export class Cell {
             return 'flagged';
         }
         return 'untouched';
+    }
+
+    incMinesAround(): number {
+        this._minesAround += 1;
+        return this._minesAround;
+    }
+
+    minesAround(): number {
+        return this._minesAround;
+    }
+
+    addMinesAround(incNumber: number): number {
+        this._minesAround = incNumber;
+        return this._minesAround;
     }
 }

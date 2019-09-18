@@ -86,5 +86,90 @@ describe(Grid, () => {
 
             expect(mineCount).toBe(10);
         });
+
+        /*
+        * cells.splice(9, 1, Cell.withBomb());
+        cells.splice(0, 1, Cell.withBomb());
+        cells.splice(1, 1, Cell.withBomb());
+        cells.splice(99, 1, Cell.withBomb());
+        cells.splice(98, 1, Cell.withBomb());
+        cells.splice(90, 1, Cell.withBomb());
+        cells.splice(81, 1, Cell.withBomb());
+        */
+    });
+
+    test('a game with a minimum 2 case board and 1 bomb, is having on an empty case the number 1', () => {
+        const grid = Grid.generate(2, 1, 1);
+        for (let cell of grid) {
+            if (!cell.bomb) expect(cell.minesAround()).toBe(1);
+        }
+    });
+    test('a game of 4 cases with two bombs on end board, is having on empty cases the number 1', () => {
+        const cellWithBomb = Cell.withBomb();
+        const cellWithoutBomb = Cell.withoutBomb();
+        const grid = new Grid(1, [
+            cellWithBomb,
+            cellWithoutBomb,
+            cellWithoutBomb,
+            cellWithBomb,
+        ]);
+        grid.setNumberOfSurrondingMines();
+        for (let cell of grid) {
+            if (!cell.bomb) expect(cell.minesAround()).toBe(1);
+        }
+    });
+    test('a game of 4 cases with two bombs in the middle of the board, is having on empty cases the number 1', () => {
+        const cellWithBomb = Cell.withBomb();
+        const cellWithoutBomb = Cell.withoutBomb();
+        const grid = new Grid(1, [
+            cellWithoutBomb,
+            cellWithBomb,
+            cellWithBomb,
+            cellWithoutBomb,
+        ]);
+        grid.setNumberOfSurrondingMines();
+        for (let cell of grid) {
+            if (!cell.bomb) expect(cell.minesAround()).toBe(1);
+        }
+    });
+    /*
+    test('a game of 3 cases with two bombs on end board, is having on empty cases the number 2', () => {
+        const cellWithBomb = Cell.withBomb();
+        const cellWithoutBomb = Cell.withoutBomb();
+        const grid = new Grid(1, [
+            Cell.withBomb(),
+            cellWithoutBomb,
+            Cell.withBomb(),
+        ]);
+        grid.setNumberOfSurrondingMines();
+        for (let cell of grid) {
+            if (!cell.bomb) expect(cell.minesAround()).toBe(2);
+            if (cell.bomb) expect(cell.minesAround()).toBe(1);
+        }
+    });
+    */
+    test('a game of 3 cases with one bomb in the middle of the board, is having on empty cases the number 1', () => {
+        const cellWithBomb = Cell.withBomb();
+        const cellWithoutBomb = Cell.withoutBomb();
+        const grid = new Grid(1, [cellWithBomb, cellWithoutBomb, cellWithBomb]);
+        grid.setNumberOfSurrondingMines();
+        for (let cell of grid) {
+            if (!cell.bomb) expect(cell.minesAround()).toBe(2);
+        }
+    });
+    test('a game of 3 cases with one bomb in the middle of the board, is having on empty cases the number 1', () => {
+        const cellWithBomb = Cell.withBomb();
+        const cellWithoutBomb = Cell.withoutBomb();
+        const grid = new Grid(1, [
+            cellWithoutBomb,
+            cellWithBomb,
+            cellWithoutBomb,
+        ]);
+        console.log(grid);
+
+        grid.setNumberOfSurrondingMines();
+        for (let cell of grid) {
+            if (!cell.bomb) expect(cell.minesAround()).toBe(1);
+        }
     });
 });
