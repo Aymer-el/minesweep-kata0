@@ -5,6 +5,7 @@ type CellProps = {
     status: CellStatus;
     onclick: Function;
     isCellOddColor: boolean;
+    surrondingMines: number;
 };
 
 const emojis = {
@@ -67,6 +68,7 @@ export const Cell: React.FunctionComponent<CellProps> = props => {
             style={cellStyle(props.status, props.isCellOddColor)}
         >
             {emojis[props.status]}
+            {props.status === 'dug' ? props.surrondingMines : ''}
         </div>
     );
 };

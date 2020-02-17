@@ -5,6 +5,7 @@ export class Cell {
     private _bomb: boolean;
     private _flagged: boolean;
     private _dug: boolean;
+    public surrondingMines: number = 0;
 
     static withBomb(): Cell {
         return new Cell(true, false, false);

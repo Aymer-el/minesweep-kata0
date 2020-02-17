@@ -40,6 +40,7 @@ export const Grid: React.FunctionComponent = () => {
                                 ? false
                                 : true
                         }
+                        surrondingMines={cell.surrondingMines}
                     />
                 ))}
             </div>
