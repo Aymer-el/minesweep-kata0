@@ -15,29 +15,29 @@ describe('Rules', () => {
         expect(isVictorious(grid)).toBe(false);
     });
 
-    test('a game is lost if a cell with a bomb has been dug', () => {
-        const cellWithBomb = Cell.withBomb();
-        const cellWithoutBomb = Cell.withoutBomb();
-        const grid = new Grid(1, [cellWithBomb, cellWithoutBomb]);
+    test('a game is lost if a cell with a mine has been dug', () => {
+        const cellWithMine = Cell.withMine();
+        const cellWithoutMine = Cell.withoutMine();
+        const grid = new Grid(1, [cellWithMine, cellWithoutMine]);
 
         expect(isDefeated(grid)).toBe(false);
         expect(isVictorious(grid)).toBe(false);
 
         let gridDetonated = grid.sendActionToCell(0, 'dig');
-        let newCellWithBomb = gridDetonated.cellByIndex(0);
-        if (!newCellWithBomb) {
-            newCellWithBomb = new Cell(true, false, false);
+        let newCellWithMine = gridDetonated.cellByIndex(0);
+        if (!newCellWithMine) {
+            newCellWithMine = new Cell(true, false, false);
         }
-        expect(newCellWithBomb.dug).toBe(true);
-        expect(newCellWithBomb.status).toBe('detonated');
+        expect(newCellWithMine.dug).toBe(true);
+        expect(newCellWithMine.status).toBe('detonated');
         expect(isDefeated(gridDetonated)).toBe(true);
         expect(isVictorious(gridDetonated)).toBe(false);
     });
 
-    test('a game is won if every cell without bomb has been dug', () => {
-        const cellWithBomb = Cell.withBomb();
-        const cellWithoutBomb = Cell.withoutBomb();
-        const grid = new Grid(1, [cellWithBomb, cellWithoutBomb]);
+    test('a game is won if every cell without mine has been dug', () => {
+        const cellWithMine = Cell.withMine();
+        const cellWithoutMine = Cell.withoutMine();
+        const grid = new Grid(1, [cellWithMine, cellWithoutMine]);
 
         expect(isDefeated(grid)).toBe(false);
         expect(isVictorious(grid)).toBe(false);

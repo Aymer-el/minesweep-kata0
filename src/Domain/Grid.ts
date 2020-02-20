@@ -11,7 +11,7 @@ export class Grid {
         const length = row * column;
         let cells: Cells = [];
         for (let i = 0; i < length; i++) {
-            const cell = minesCount > i ? Cell.withBomb() : Cell.withoutBomb();
+            const cell = minesCount > i ? Cell.withMine() : Cell.withoutMine();
             cells.push(cell);
         }
 
@@ -24,7 +24,7 @@ export class Grid {
         }
 
         for (let i = 0; i < cells.length; i++) {
-            if (cells[i].bomb) {
+            if (cells[i].mine) {
                 // 0 à 9
                 let topPossible: number = i >= column ? 1 : 0;
                 // 90
@@ -34,14 +34,14 @@ export class Grid {
                 // 19 + 1 % 5)
                 let rightPossible: number = (i + 1) % column !== 0 ? 1 : 0;
                 // map => [haut, milieu, droit]
-                if (topPossible && leftPossible) cells[i - column - 1].surrondingMines++;
-                if (topPossible) cells[i - column].surrondingMines++;
-                if (topPossible && rightPossible) cells[i - column + 1].surrondingMines++;
-                if (leftPossible) cells[i - 1].surrondingMines++;
-                if (rightPossible) cells[i + 1].surrondingMines++;
-                if (bottomPossible && leftPossible) cells[i + column - 1].surrondingMines++;
-                if (bottomPossible) cells[i + column].surrondingMines++;
-                if (bottomPossible && rightPossible) cells[i + column + 1].surrondingMines++;
+                if (topPossible && leftPossible) cells[i - column - 1].surroundingMines++;
+                if (topPossible) cells[i - column].surroundingMines++;
+                if (topPossible && rightPossible) cells[i - column + 1].surroundingMines++;
+                if (leftPossible) cells[i - 1].surroundingMines++;
+                if (rightPossible) cells[i + 1].surroundingMines++;
+                if (bottomPossible && leftPossible) cells[i + column - 1].surroundingMines++;
+                if (bottomPossible) cells[i + column].surroundingMines++;
+                if (bottomPossible && rightPossible) cells[i + column + 1].surroundingMines++;
             }
         }
         return new Grid(column, cells);

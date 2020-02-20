@@ -8,8 +8,8 @@ describe(Grid, () => {
 
     describe('getByCoordinate', () => {
         test('it get the first cell in grid when asking for x:0 y:0', () => {
-            const expected = Cell.withBomb();
-            const unexpected = Cell.withoutBomb();
+            const expected = Cell.withMine();
+            const unexpected = Cell.withoutMine();
             const grid = new Grid(5, [
                 expected,
                 unexpected,
@@ -22,8 +22,8 @@ describe(Grid, () => {
         });
 
         test('it get the last cell in grid when asking for x:3 y:1', () => {
-            const expected = Cell.withBomb();
-            const unexpected = Cell.withoutBomb();
+            const expected = Cell.withMine();
+            const unexpected = Cell.withoutMine();
             const grid = new Grid(4, [
                 unexpected,
                 unexpected,
@@ -89,7 +89,7 @@ describe(Grid, () => {
     });
 
 
-    describe('checks the total of surronding mines (ab: totalSurroundingMines)', () => {
+    describe('checks the total of surrounding mines (ab: totalSurroundingMines)', () => {
       const row: number = 10;
       const column: number = 10;
       const iterator = Array.from(Array(row * column));
@@ -97,7 +97,7 @@ describe(Grid, () => {
       function checkAroundsAMine (_: any, i: number, totalSurroundingMines: number) {
               let countMine: number = 0;
               const currentCase = grid.cellByIndex(i);
-              if (currentCase && currentCase.surrondingMines === totalSurroundingMines && !currentCase.bomb) {
+              if (currentCase && currentCase.surroundingMines === totalSurroundingMines && !currentCase.mine) {
                 // 0 à 9
                 let topPossible: number = i >= column ? 1 : 0;
                 // 90
@@ -112,43 +112,43 @@ describe(Grid, () => {
                 console.log('-------------')
                 console.log(currentCase, i);
 
-                if(topPossible && cell && +cell.bomb) {
+                if(topPossible && cell && +cell.mine) {
                   console.log(cell, (i - column))
                 }
                 */
 
                 // top left
                 let cell = grid.cellByIndex(i - column - 1);
-                if(topPossible && leftPossible && cell) countMine += +cell.bomb;
+                if(topPossible && leftPossible && cell) countMine += +cell.mine;
                 // top
                 cell = grid.cellByIndex(i - column);
-                if(topPossible && cell) countMine += +cell.bomb;
+                if(topPossible && cell) countMine += +cell.mine;
                 // top right
                 cell = grid.cellByIndex(i - column + 1);
-                if(topPossible && rightPossible && cell) countMine += +cell.bomb;
+                if(topPossible && rightPossible && cell) countMine += +cell.mine;
                 // left
                 cell = grid.cellByIndex(i - 1);
-                if(leftPossible && cell) countMine += +cell.bomb;
+                if(leftPossible && cell) countMine += +cell.mine;
                 // right
                 cell = grid.cellByIndex(i + 1);
-                if(rightPossible && cell) countMine += +cell.bomb;
+                if(rightPossible && cell) countMine += +cell.mine;
                 // bottom right
                 cell = grid.cellByIndex(i + column +1);
-                if(bottomPossible && rightPossible && cell) countMine += +cell.bomb;
+                if(bottomPossible && rightPossible && cell) countMine += +cell.mine;
                 // bottom
                 cell = grid.cellByIndex(i + column);
-                if(bottomPossible && cell) countMine += +cell.bomb;
+                if(bottomPossible && cell) countMine += +cell.mine;
                 // bottom left
                 cell = grid.cellByIndex(i + column - 1);
-                if(bottomPossible && leftPossible && cell) countMine += +cell.bomb;
+                if(bottomPossible && leftPossible && cell) countMine += +cell.mine;
 
                 expect(countMine).toBe(totalSurroundingMines);
           }
       }
       //const iterator = Array.from(Array(row * column));
 
-    // expNumber expected number of surronding Mines
-    test('expected number of surronding mines', () => {
+    // expNumber expected number of surrounding Mines
+    test('expected number of surrounding mines', () => {
       for(let expectMines = 0; expectMines < 8; expectMines++) {
         iterator.forEach((_: any, i: number) => checkAroundsAMine(_, i, expectMines));
       }

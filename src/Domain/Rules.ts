@@ -10,9 +10,9 @@ export const isDefeated = (grid: Grid) => {
 export const isVictorious = (grid: Grid) => {
     for (let cell of grid) {
         // S'il reste des cases à creusées
-        // Si une bombe a explosé
+        // Si une minee a explosé
         if (
-            (cell.dug === false && cell.bomb === false) ||
+            (cell.dug === false && cell.mine === false) ||
             cell.detonated === true
         ) {
             return false;
