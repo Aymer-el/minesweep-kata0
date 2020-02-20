@@ -24,6 +24,8 @@ export class Grid {
         }
 
         for (let i = 0; i < cells.length; i++) {
+
+            /*
             if (cells[i].bomb) {
                 // 0 à 9
                 let topPossible: number = i >= column ? 1 : 0;
@@ -42,6 +44,40 @@ export class Grid {
                 if (bottomPossible && leftPossible) cells[i + column - 1].surrondingMines++;
                 if (bottomPossible) cells[i + column].surrondingMines++;
                 if (bottomPossible && rightPossible) cells[i + column + 1].surrondingMines++;
+            }
+            */
+
+            if(cells[i].bomb) {
+              // 0 à 9
+              let isTopOK = (i >= column) ? 1 : 0;
+              // 90
+              let isBottomOK = (!isTopOK ? 1 : i < cells.length - column) ? 1 : 0;
+              // 15 % 10 = 5 parcontre 10 % 10 = 0
+              let isLeftOK = (i % column !== 0) ? 1 : 0;
+              // 19 + 1 % 5)
+              let isRightOK = (!isLeftOK ? 1 : (i + 1) % column !== 0) ? 1 : 0;
+              // Mapping possible cells around the cell of the index, from 0 to 8.
+              let position = 0;
+              // Whether the direction in the grid is ok: left, top, right, bottom.
+              const truthTab: Array<number> = [isLeftOK, isTopOK, isRightOK, isBottomOK, isLeftOK];
+              // Cells to count or decount Around the current index (i).
+              const coordinate: Array<number> = [-1, -10];
+              // is two possible the two direction possible L largeur et l longueur ?
+              let isPair: boolean = true;
+              while (position < 8) {
+                isPair = position % 2 === 0;
+                if(isPair) {
+                  cells[i + coordinate[0] * truthTab[Math.floor(position/2)]].surrondingMines++;
+                } else {
+                  cells[i + (coordinate[0] + coordinate[1]) *
+                    (truthTab[Math.floor(position/2)] * truthTab[Math.floor((position +1)/2)])
+                  ].surrondingMines++;
+                  coordinate.push(-coordinate[0]);
+                  coordinate.shift();
+                }
+                position++;
+              }
+              position = 0;
             }
         }
         return new Grid(column, cells);
