@@ -5,7 +5,7 @@ export class Cell {
     private _mine: boolean;
     private _flagged: boolean;
     private _dug: boolean;
-    public surroundingMines: number = 0;
+    public surroundingMines: number;
 
     static withMine(): Cell {
         return new Cell(true, false, false);
@@ -15,21 +15,22 @@ export class Cell {
         return new Cell(false, false, false);
     }
 
-    constructor(withMine: boolean, flagged: boolean, dug: boolean) {
+    constructor(withMine: boolean, flagged: boolean, dug: boolean, surroundingMines?: number) {
         this._mine = withMine;
         this._flagged = flagged;
         this._dug = dug;
+        this.surroundingMines = surroundingMines || 0;
     }
 
     flag(): Cell {
         if (this._dug === true) {
             throw new Error('This cell has already been dug');
         }
-        return new Cell(this._mine, !this._flagged, this._dug);
+        return new Cell(this._mine, !this._flagged, this._dug, this.surroundingMines);
     }
 
     dig(): Cell {
-        return new Cell(this._mine, false, true);
+        return new Cell(this._mine, false, true, this.surroundingMines);
     }
 
     get detonated(): boolean {

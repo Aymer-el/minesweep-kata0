@@ -84,7 +84,6 @@ export class Grid {
     sendActionToCell(cellIndex: number, action: CellAction): Grid {
         const cells = [...this._cells];
         const cell = cells[cellIndex];
-
         cells[cellIndex] = cell[action]();
         return new Grid(this._column, cells);
     }
