@@ -91,11 +91,14 @@ export class Grid {
             } else if (
                 truthTab[Math.floor(position / (totalposition / 4))] &&
                 truthTab[Math.floor((position + 1) / (totalposition / 4))]
-            ) {
-                arrayIndexes.push(i + (coordinate[0] + coordinate[1]));
+            )
+                // moving on a direction (top left to top, top to topright etc...)
+                for (let til = totalposition / 8; til > 0; til--){
+                    arrayIndexes.push(i + (til * coordinate[0] + coordinate[1]));
+                }
             }
             if (!isPair) {
-                coordinate.push(-coordinate[0]);
+                coordinate.push(-coordinate[0] * totalposition / 8);
                 coordinate.shift();
             }
             position++;
@@ -142,7 +145,6 @@ export class Grid {
         const cells = [...this._cells];
         const cell = cells[cellIndex];
         cells[cellIndex] = cell[action]();
-        this.digAllZero(cellIndex);
         return new Grid(this._column, cells);
     }
 
