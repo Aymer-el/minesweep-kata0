@@ -146,6 +146,13 @@ export class Grid {
         const cells = [...this._cells];
         const cell = cells[cellIndex];
         cells[cellIndex] = cell[action]();
+        this.digAllZero(cellIndex).map((index) => {
+            const c = cells[index];
+            if(!c.mine) {
+                cells[index] = c[action]();
+            }
+        })
+
         return new Grid(this._column, cells);
     }
 
@@ -154,6 +161,6 @@ export class Grid {
     }
 
     digAllZero(index: number): Array<number> {
-        return Grid.cellArounds(this._column, this._cells, index, 16, [true, false]);
+        return Grid.cellArounds(this._column, this._cells, index, 8, []);
     }
 }
