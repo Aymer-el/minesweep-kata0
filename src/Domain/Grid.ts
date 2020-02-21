@@ -91,4 +91,9 @@ export class Grid {
     get column() {
         return this._column;
     }
+
+    digAllZero() {
+      
+
+    }
 }
