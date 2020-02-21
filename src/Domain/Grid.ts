@@ -76,13 +76,13 @@ export class Grid {
         const arrayIndexes: Array<number> = [];
         // Mapping possible cells around the cell of the index, from 0 to totalposition.
         let position = 0;
-        while (position < 8) {
+        while (position < totalposition) {
             isPair = position % (totalposition / 4) === 0;
-            if (isPair && truthTab[Math.floor(position / 2)]) {
+            if (isPair && truthTab[Math.floor(position / (totalposition / 4))]) {
                 arrayIndexes.push(i + coordinate[0])
             } else if (
-                truthTab[Math.floor(position / 2)] &&
-                truthTab[Math.floor((position + 1) / 2)]
+                truthTab[Math.floor(position / (totalposition / 4))] &&
+                truthTab[Math.floor((position +1)/ (totalposition / 4))]
             ) {
                 arrayIndexes.push(i + (coordinate[0] + coordinate[1]))
             }
@@ -134,6 +134,7 @@ export class Grid {
         const cells = [...this._cells];
         const cell = cells[cellIndex];
         cells[cellIndex] = cell[action]();
+        this.digAllZero(cellIndex);
         return new Grid(this._column, cells);
     }
 
@@ -141,7 +142,7 @@ export class Grid {
         return this._column;
     }
 
-    digAllZero() {
-
+    digAllZero(index: number): Array<number> {
+        return Grid.cellArounds(this._column, this._cells, index, 16)
     }
 }
