@@ -48,11 +48,11 @@ export class Grid {
               }
           */
 
-            /*
+          /*
               Both Algorithm: are having the same goal: adding surrounding mines. You can comment on on off.
           */
             if (cells[i].mine) {
-                for (let cellIndex of Grid.cellArounds(column, cells, i)){
+                for (let cellIndex of Grid.cellArounds(column, cells, i, 8)){
                     cells[cellIndex].surroundingMines++;
                 }
 
@@ -62,13 +62,11 @@ export class Grid {
         return new Grid(column, cells);
     }
 
-    static cellArounds(column: number, cells: Array<Cell>, i: number): Array<number> {
+    static cellArounds(column: number, cells: Array<Cell>, i: number, totalposition: number): Array<number> {
         let top = i >= column;
         let bottom = !top || i < cells.length - column;
         let left = i % column !== 0;
         let right = !left || (i + 1) % column !== 0;
-        // Mapping possible cells around the cell of the index, from 0 to 8.
-        let position = 0;
         // Whether the direction in the grid is ok: left, top, right, bottom.
         const truthTab: Array<boolean> = [left, top, right, bottom, left];
         // Cells to count or decount Around the current index (i).
@@ -76,8 +74,10 @@ export class Grid {
         // is two possible the two direction possible L largeur et l longueur ?
         let isPair: boolean = true;
         const arrayIndexes: Array<number> = [];
+        // Mapping possible cells around the cell of the index, from 0 to totalposition.
+        let position = 0;
         while (position < 8) {
-            isPair = position % 2 === 0;
+            isPair = position % (totalposition / 4) === 0;
             if (isPair && truthTab[Math.floor(position / 2)]) {
                 arrayIndexes.push(i + coordinate[0])
             } else if (
@@ -141,5 +141,7 @@ export class Grid {
         return this._column;
     }
 
-    digAllZero() {}
+    digAllZero() {
+
+    }
 }
