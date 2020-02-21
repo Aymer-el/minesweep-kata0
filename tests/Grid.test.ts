@@ -88,16 +88,23 @@ describe(Grid, () => {
         });
     });
 
-
     describe('checks the total of surrounding mines (ab: totalSurroundingMines)', () => {
-      const row: number = 10;
-      const column: number = 10;
-      const iterator = Array.from(Array(row * column));
-      const grid = Grid.generate(row, column, 10);
-      function checkAroundsAMine (_: any, i: number, totalSurroundingMines: number) {
-              let countMine: number = 0;
-              const currentCase = grid.cellByIndex(i);
-              if (currentCase && currentCase.surroundingMines === totalSurroundingMines && !currentCase.mine) {
+        const row: number = 10;
+        const column: number = 10;
+        const iterator = Array.from(Array(row * column));
+        const grid = Grid.generate(row, column, 10);
+        function checkAroundsAMine(
+            _: any,
+            i: number,
+            totalSurroundingMines: number
+        ) {
+            let countMine: number = 0;
+            const currentCase = grid.cellByIndex(i);
+            if (
+                currentCase &&
+                currentCase.surroundingMines === totalSurroundingMines &&
+                !currentCase.mine
+            ) {
                 // 0 à 9
                 let topPossible: number = i >= column ? 1 : 0;
                 // 90
@@ -119,39 +126,45 @@ describe(Grid, () => {
 
                 // top left
                 let cell = grid.cellByIndex(i - column - 1);
-                if(topPossible && leftPossible && cell) countMine += +cell.mine;
+                if (topPossible && leftPossible && cell)
+                    countMine += +cell.mine;
                 // top
                 cell = grid.cellByIndex(i - column);
-                if(topPossible && cell) countMine += +cell.mine;
+                if (topPossible && cell) countMine += +cell.mine;
                 // top right
                 cell = grid.cellByIndex(i - column + 1);
-                if(topPossible && rightPossible && cell) countMine += +cell.mine;
+                if (topPossible && rightPossible && cell)
+                    countMine += +cell.mine;
                 // left
                 cell = grid.cellByIndex(i - 1);
-                if(leftPossible && cell) countMine += +cell.mine;
+                if (leftPossible && cell) countMine += +cell.mine;
                 // right
                 cell = grid.cellByIndex(i + 1);
-                if(rightPossible && cell) countMine += +cell.mine;
+                if (rightPossible && cell) countMine += +cell.mine;
                 // bottom right
-                cell = grid.cellByIndex(i + column +1);
-                if(bottomPossible && rightPossible && cell) countMine += +cell.mine;
+                cell = grid.cellByIndex(i + column + 1);
+                if (bottomPossible && rightPossible && cell)
+                    countMine += +cell.mine;
                 // bottom
                 cell = grid.cellByIndex(i + column);
-                if(bottomPossible && cell) countMine += +cell.mine;
+                if (bottomPossible && cell) countMine += +cell.mine;
                 // bottom left
                 cell = grid.cellByIndex(i + column - 1);
-                if(bottomPossible && leftPossible && cell) countMine += +cell.mine;
+                if (bottomPossible && leftPossible && cell)
+                    countMine += +cell.mine;
 
                 expect(countMine).toBe(totalSurroundingMines);
-          }
-      }
-      //const iterator = Array.from(Array(row * column));
+            }
+        }
+        //const iterator = Array.from(Array(row * column));
 
-    // expNumber expected number of surrounding Mines
-    test('expected number of surrounding mines', () => {
-      for(let expectMines = 0; expectMines < 8; expectMines++) {
-        iterator.forEach((_: any, i: number) => checkAroundsAMine(_, i, expectMines));
-      }
+        // expNumber expected number of surrounding Mines
+        test('expected number of surrounding mines', () => {
+            for (let expectMines = 0; expectMines < 8; expectMines++) {
+                iterator.forEach((_: any, i: number) =>
+                    checkAroundsAMine(_, i, expectMines)
+                );
+            }
+        });
     });
-  })
 });

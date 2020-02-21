@@ -15,7 +15,12 @@ export class Cell {
         return new Cell(false, false, false);
     }
 
-    constructor(withMine: boolean, flagged: boolean, dug: boolean, surroundingMines?: number) {
+    constructor(
+        withMine: boolean,
+        flagged: boolean,
+        dug: boolean,
+        surroundingMines?: number
+    ) {
         this._mine = withMine;
         this._flagged = flagged;
         this._dug = dug;
@@ -26,7 +31,12 @@ export class Cell {
         if (this._dug === true) {
             throw new Error('This cell has already been dug');
         }
-        return new Cell(this._mine, !this._flagged, this._dug, this.surroundingMines);
+        return new Cell(
+            this._mine,
+            !this._flagged,
+            this._dug,
+            this.surroundingMines
+        );
     }
 
     dig(): Cell {

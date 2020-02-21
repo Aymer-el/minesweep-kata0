@@ -69,7 +69,6 @@ export const Cell: React.FunctionComponent<CellProps> = props => {
         >
             {emojis[props.status]}
             {props.status === 'dug' ? props.surroundingMines : ''}
-
         </div>
     );
 };
