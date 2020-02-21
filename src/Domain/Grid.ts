@@ -52,40 +52,48 @@ export class Grid {
               Both Algorithm: are having the same goal: adding surrounding mines. You can comment on on off.
           */
             if (cells[i].mine) {
-                let top = i >= column;
-                let bottom = !top || i < cells.length - column;
-                let left = i % column !== 0;
-                let right = !left || (i + 1) % column !== 0;
-                // Mapping possible cells around the cell of the index, from 0 to 8.
-                let position = 0;
-                // Whether the direction in the grid is ok: left, top, right, bottom.
-                const truthTab: Array<boolean> = [left, top, right, bottom, left];
-                // Cells to count or decount Around the current index (i).
-                const coordinate: Array<number> = [-1, -10];
-                // is two possible the two direction possible L largeur et l longueur ?
-                let isPair: boolean = true;
-                while (position < 8) {
-                    isPair = position % 2 === 0;
-                    if (isPair && truthTab[Math.floor(position / 2)]) {
-                        cells[i + coordinate[0]].surroundingMines++;
-                    } else if (
-                        truthTab[Math.floor(position / 2)] &&
-                        truthTab[Math.floor((position + 1) / 2)]
-                    ) {
-                        cells[i + (coordinate[0] + coordinate[1])]
-                            .surroundingMines++;
-                    }
-                    if (!isPair) {
-                        coordinate.push(-coordinate[0]);
-                        coordinate.shift();
-                    }
-                    position++;
+                for (let cellIndex of Grid.cellArounds(column, cells, i)){
+                    cells[cellIndex].surroundingMines++;
                 }
-                position = 0;
+
             }
         }
 
         return new Grid(column, cells);
+    }
+
+    static cellArounds(column: number, cells: Array<Cell>, i: number): Array<number> {
+        let top = i >= column;
+        let bottom = !top || i < cells.length - column;
+        let left = i % column !== 0;
+        let right = !left || (i + 1) % column !== 0;
+        // Mapping possible cells around the cell of the index, from 0 to 8.
+        let position = 0;
+        // Whether the direction in the grid is ok: left, top, right, bottom.
+        const truthTab: Array<boolean> = [left, top, right, bottom, left];
+        // Cells to count or decount Around the current index (i).
+        const coordinate: Array<number> = [-1, -10];
+        // is two possible the two direction possible L largeur et l longueur ?
+        let isPair: boolean = true;
+        const arrayIndexes: Array<number> = [];
+        while (position < 8) {
+            isPair = position % 2 === 0;
+            if (isPair && truthTab[Math.floor(position / 2)]) {
+                arrayIndexes.push(i + coordinate[0])
+            } else if (
+                truthTab[Math.floor(position / 2)] &&
+                truthTab[Math.floor((position + 1) / 2)]
+            ) {
+                arrayIndexes.push(i + (coordinate[0] + coordinate[1]))
+            }
+            if (!isPair) {
+                coordinate.push(-coordinate[0]);
+                coordinate.shift();
+            }
+            position++;
+        }
+        position = 0;
+        return arrayIndexes;
     }
 
     constructor(column: number, cells: Cells) {
