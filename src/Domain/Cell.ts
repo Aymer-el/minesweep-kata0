@@ -2,37 +2,53 @@ export type CellStatus = 'untouched' | 'flagged' | 'dug' | 'detonated';
 export type CellAction = 'dig' | 'flag';
 
 export class Cell {
-    private _bomb: boolean;
+    private _mine: boolean;
     private _flagged: boolean;
     private _dug: boolean;
+    public surroundingMines: number;
 
-    static withBomb(): Cell {
+    static withMine(): Cell {
         return new Cell(true, false, false);
     }
 
-    static withoutBomb(): Cell {
+    static withoutMine(): Cell {
         return new Cell(false, false, false);
     }
 
-    constructor(withBomb: boolean, flagged: boolean, dug: boolean) {
-        this._bomb = withBomb;
+    constructor(
+        withMine: boolean,
+        flagged: boolean,
+        dug: boolean,
+        surroundingMines?: number
+    ) {
+        this._mine = withMine;
         this._flagged = flagged;
         this._dug = dug;
+        this.surroundingMines = surroundingMines || 0;
     }
 
     flag(): Cell {
         if (this._dug === true) {
             throw new Error('This cell has already been dug');
         }
-        return new Cell(this._bomb, !this._flagged, this._dug);
+        return new Cell(
+            this._mine,
+            !this._flagged,
+            this._dug,
+            this.surroundingMines
+        );
     }
 
     dig(): Cell {
-        return new Cell(this._bomb, false, true);
+        return new Cell(this._mine, false, true, this.surroundingMines);
     }
 
     get detonated(): boolean {
-        return this._bomb && this.dug;
+        return this._mine && this.dug;
+    }
+
+    get mine(): boolean {
+        return this._mine;
     }
 
     get flagged(): boolean {

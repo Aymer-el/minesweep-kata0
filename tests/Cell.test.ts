@@ -1,8 +1,8 @@
 import { Cell } from '../src/Domain/Cell';
 
 describe(Cell, () => {
-    describe('without a bomb', () => {
-        const cell = Cell.withoutBomb();
+    describe('without a mine', () => {
+        const cell = Cell.withoutMine();
 
         test('does not explodes if untouched', () => {
             expect(cell.detonated).toBe(false);
@@ -13,7 +13,7 @@ describe(Cell, () => {
             expect(cell.detonated).toBe(false);
         });
 
-        test('does not explode even when you dig it (there is no bomb)', () => {
+        test('does not explode even when you dig it (there is no mine)', () => {
             cell.dig();
             expect(cell.detonated).toBe(false);
         });
@@ -27,8 +27,8 @@ describe(Cell, () => {
         });
     });
 
-    describe('with a bomb', () => {
-        const trappedCell = Cell.withBomb();
+    describe('with a mine', () => {
+        const trappedCell = Cell.withMine();
 
         test('does not explodes if untouched', () => {
             expect(trappedCell.detonated).toBe(false);
