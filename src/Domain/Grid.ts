@@ -91,7 +91,7 @@ export class Grid {
             } else if (
                 truthTab[Math.floor(position / (totalposition / 4))] &&
                 truthTab[Math.floor((position + 1) / (totalposition / 4))]
-            )
+            ){
                 // moving on a direction (top left to top, top to topright etc...)
                 for (let til = totalposition / 8; til > 0; til--){
                     arrayIndexes.push(i + (til * coordinate[0] + coordinate[1]));
@@ -105,6 +105,7 @@ export class Grid {
         }
         position = 0;
         return arrayIndexes;
+
     }
 
     constructor(column: number, cells: Cells) {
