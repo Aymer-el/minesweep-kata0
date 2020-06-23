@@ -52,7 +52,7 @@ export class Grid {
               Both Algorithm: are having the same goal: adding surrounding mines. You can comment on on off.
           */
             if (cells[i].mine) {
-                for (let cellIndex of Grid.cellArounds(column, cells, i, 8)) {
+                for (let cellIndex of Grid.cellArounds(column, cells, i)) {
                     cells[cellIndex].surroundingMines++;
                 }
             }
@@ -64,16 +64,17 @@ export class Grid {
     static cellArounds(
         column: number,
         cells: Array<Cell>,
-        i: number,
-        totalposition: number,
-        forceNotTab: Array<boolean> = []
+        i: number
+        //forceNotTab: Array<boolean> = []
     ): Array<number> {
-        let top = forceNotTab[0] ? false : i >= column;
-        let bottom = forceNotTab[1] ? false : !top || i < cells.length - column;
-        let left = forceNotTab[2] ? false : i % column !== 0;
-        let right = forceNotTab[3] ? false : !left || (i + 1) % column !== 0;
-        // Whether the direction in the grid is ok: left, top, right, bottom.
+        //let top = forceNotTab[0] ? false : i >= column;
+        // Whether the cells exist: left, top, right, bottom.
+        let top = i >= column;
+        let bottom = !top || i < cells.length - column;
+        let left = i % column !== 0;
+        let right = !left || (i + 1) % column !== 0;
         const truthTab = [left , top, right, bottom, left];
+        let totalposition = 8; // there are 8 cells around 1.
         // Cells to count or decount Around the current index (i).
         const coordinate: Array<number> = [-1, -10];
         // is two possible the two direction possible L largeur et l longueur ?
@@ -82,23 +83,31 @@ export class Grid {
         // Mapping possible cells around the cell of the index, from 0 to totalposition.
         let position = 0;
         while (position < totalposition) {
-            isPair = position % (totalposition / 4) === 0;
+            // Beginning middle left if it is possible.
+            // isPair = position % (totalposition / 4) === 0;
+            isPair = position % 2  === 0;
             if (
                 isPair &&
-                truthTab[Math.floor(position / (totalposition / 4))]
+                //truthTab[Math.floor(position / (totalposition / 4))]
+                truthTab[Math.floor(position / 2)]
             ) {
                 arrayIndexes.push(i + coordinate[0]);
             } else if (
-                truthTab[Math.floor(position / (totalposition / 4))] &&
-                truthTab[Math.floor((position + 1) / (totalposition / 4))]
+                //truthTab[Math.floor(position / (totalposition / 4))] &&
+                truthTab[Math.floor(position / 2)] &&
+                //truthTab[Math.floor((position + 1) / (totalposition / 4))]
+                truthTab[Math.floor((position + 1) / 2)]
             ){
                 // moving on a direction (top left to top, top to topright etc...)
-                for (let til = totalposition / 8; til > 0; til--){
-                    arrayIndexes.push(i + (til * coordinate[0] + coordinate[1]));
-                }
+                //for (let til = totalposition / 8; til > 0; til--){
+                    // arrayIndexes.push(i + (til * coordinate[0] + coordinate[1]));
+                    arrayIndexes.push(i + (coordinate[0] + coordinate[1]));
+                //}
             }
             if (!isPair) {
-                coordinate.push(-coordinate[0] * totalposition / 8);
+                //coordinate.push(-coordinate[0] * totalposition / 8);
+                // switching coordinate
+                coordinate.push(-coordinate[0]);
                 coordinate.shift();
             }
             position++;
@@ -161,6 +170,6 @@ export class Grid {
     }
 
     digAllZero(index: number): Array<number> {
-        return Grid.cellArounds(this._column, this._cells, index, 8, []);
+        return Grid.cellArounds(this._column, this._cells, index);
     }
 }
