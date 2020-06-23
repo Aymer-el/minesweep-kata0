@@ -64,57 +64,42 @@ export class Grid {
     static cellArounds(
         column: number,
         cells: Array<Cell>,
-        i: number
-        //forceNotTab: Array<boolean> = []
+        targetedCell: number
     ): Array<number> {
-        //let top = forceNotTab[0] ? false : i >= column;
-        // Whether the cells exist: left, top, right, bottom.
-        let top = i >= column;
-        let bottom = !top || i < cells.length - column;
-        let left = i % column !== 0;
-        let right = !left || (i + 1) % column !== 0;
-        const truthTab = [left , top, right, bottom, left];
-        let totalposition = 8; // there are 8 cells around 1.
-        // Cells to count or decount Around the current index (i).
+        // Whether the neighboor cells exist: left, top, right, bottom.
+        let top = targetedCell >= column;
+        let bottom = !top || targetedCell < cells.length - column;
+        let left = targetedCell % column !== 0;
+        let right = !left || (targetedCell + 1) % column !== 0;
+        const possibleSide = [left, top, right, bottom, left];
         const coordinate: Array<number> = [-1, -10];
-        // is two possible the two direction possible L largeur et l longueur ?
-        let isPair: boolean = true;
-        const arrayIndexes: Array<number> = [];
-        // Mapping possible cells around the cell of the index, from 0 to totalposition.
-        let position = 0;
-        while (position < totalposition) {
+        const cellsAround: Array<number> = [];
+        // coordinates of neighboor cells around the targeted cell.
+        let positionSide = -1;
+        // Stocking possible neighboor cells with a for loop around the targeted cell.
+        for (let positionCells = 0; positionCells < 8; positionCells++) {
             // Beginning middle left if it is possible.
-            // isPair = position % (totalposition / 4) === 0;
-            isPair = position % 2  === 0;
-            if (
-                isPair &&
-                //truthTab[Math.floor(position / (totalposition / 4))]
-                truthTab[Math.floor(position / 2)]
-            ) {
-                arrayIndexes.push(i + coordinate[0]);
+            let isPair = positionCells % 2 === 0;
+            // moving in the truthTab (left, top, right, bottom)
+            if (isPair) {
+                positionSide++;
+            }
+            if (isPair && possibleSide[positionSide]) {
+                cellsAround.push(targetedCell + coordinate[0]);
             } else if (
-                //truthTab[Math.floor(position / (totalposition / 4))] &&
-                truthTab[Math.floor(position / 2)] &&
-                //truthTab[Math.floor((position + 1) / (totalposition / 4))]
-                truthTab[Math.floor((position + 1) / 2)]
-            ){
-                // moving on a direction (top left to top, top to topright etc...)
-                //for (let til = totalposition / 8; til > 0; til--){
-                    // arrayIndexes.push(i + (til * coordinate[0] + coordinate[1]));
-                    arrayIndexes.push(i + (coordinate[0] + coordinate[1]));
-                //}
+                possibleSide[positionSide] &&
+                possibleSide[positionSide + 1]
+            ) {
+                cellsAround.push(
+                    targetedCell + (coordinate[0] + coordinate[1])
+                );
             }
             if (!isPair) {
-                //coordinate.push(-coordinate[0] * totalposition / 8);
-                // switching coordinate
                 coordinate.push(-coordinate[0]);
                 coordinate.shift();
             }
-            position++;
         }
-        position = 0;
-        return arrayIndexes;
-
+        return cellsAround;
     }
 
     constructor(column: number, cells: Cells) {
@@ -155,12 +140,12 @@ export class Grid {
         const cells = [...this._cells];
         const cell = cells[cellIndex];
         cells[cellIndex] = cell[action]();
-        this.digAllZero(cellIndex).map((index) => {
+        this.digAllZero(cellIndex).map(index => {
             const c = cells[index];
-            if(!c.mine) {
+            if (c && !c.mine) {
                 cells[index] = c[action]();
             }
-        })
+        });
 
         return new Grid(this._column, cells);
     }
