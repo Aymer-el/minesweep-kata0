@@ -53,6 +53,10 @@ export class Grid {
           */
             if (cells[i].mine) {
                 for (let cellIndex of Grid.cellArounds(column, cells, i)) {
+                    if(!cells[cellIndex]) {
+                        //console.log(cellIndex)
+                        //console.log(cells)
+                    }
                     cells[cellIndex].surroundingMines++;
                 }
             }
@@ -81,14 +85,33 @@ export class Grid {
             // Beginning middle left if it is possible.
             let isPair = positionCells % 2 === 0;
             // moving in the truthTab (left, top, right, bottom)
+            /*
+            if (isPair) {
+                positionSide++;
+            }
+            if (isPair && possibleSide[positionSide]) {
+                cellsAround.push(targetedCell + coordinate[0]);
+            } else if (
+                possibleSide[positionSide] &&
+                possibleSide[positionSide + 1]
+            ) {
+                cellsAround.push(
+                    targetedCell + (coordinate[0] + coordinate[1])
+                );
+            }
+            if (!isPair) {
+                coordinate.push(-coordinate[0]);
+                coordinate.shift();
+            }*/
             if (isPair) {
                 positionSide++;
                 if(possibleSide[positionSide]){ cellsAround.push(targetedCell + coordinate[0]) }
+
+            } else {
                 if (possibleSide[positionSide] && possibleSide[positionSide + 1]) {
                     cellsAround.push(
                         targetedCell + (coordinate[0] + coordinate[1]))
                 }
-            } else {
                 coordinate.push(-coordinate[0]);
                 coordinate.shift();
             }
@@ -136,8 +159,10 @@ export class Grid {
         cells[cellIndex] = cell[action]();
         this.digAllZero(cellIndex).map(index => {
             const c = cells[index];
-            if (c && !c.mine) {
+            if (!c.mine) {
                 cells[index] = c[action]();
+            } else {
+                //console.log(index)
             }
         });
 
@@ -146,6 +171,10 @@ export class Grid {
 
     get column() {
         return this._column;
+    }
+
+    get gridLength() {
+        return this._cells.length
     }
 
     digAllZero(index: number): Array<number> {
