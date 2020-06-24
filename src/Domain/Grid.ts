@@ -83,18 +83,12 @@ export class Grid {
             // moving in the truthTab (left, top, right, bottom)
             if (isPair) {
                 positionSide++;
-            }
-            if (isPair && possibleSide[positionSide]) {
-                cellsAround.push(targetedCell + coordinate[0]);
-            } else if (
-                possibleSide[positionSide] &&
-                possibleSide[positionSide + 1]
-            ) {
-                cellsAround.push(
-                    targetedCell + (coordinate[0] + coordinate[1])
-                );
-            }
-            if (!isPair) {
+                if(possibleSide[positionSide]){ cellsAround.push(targetedCell + coordinate[0]) }
+                if (possibleSide[positionSide] && possibleSide[positionSide + 1]) {
+                    cellsAround.push(
+                        targetedCell + (coordinate[0] + coordinate[1]))
+                }
+            } else {
                 coordinate.push(-coordinate[0]);
                 coordinate.shift();
             }
