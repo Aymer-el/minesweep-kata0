@@ -2,14 +2,16 @@ import { Grid } from './Grid';
 import { Cell } from './Cell';
 
 export const isDefeated = async (grid: Grid) => {
-    return new Promise((resolve, reject) => {
-        let answ = false;
-        /*await grid.map((cell) => {
-            if (cell.detonated && cell.mine) {
-                resolve(true);
-            }
-        });*/
-    });
+    let defeat: boolean = false;
+    let i = 0;
+    while (!defeat && grid.gridLength < i) {
+        const cell = grid.cellByIndex(i);
+        if (cell && cell.detonated) {
+            defeat = true;
+        }
+        i++;
+    }
+    return defeat;
 };
 
 export const isVictorious = async (grid: Grid) => {
