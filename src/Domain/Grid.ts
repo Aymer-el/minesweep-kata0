@@ -23,59 +23,40 @@ export class Grid {
             cells[index] = cell;
         }
 
-        for (let i = 0; i < cells.length; i++) {
-            /*
-              Both Algorithm: are having the same goal: adding surrounding mines. You can comment on on off.
-
-              if (cells[i].mine) {
-                  // 0 à 9
-                  let topPossible: number = i >= column ? 1 : 0;
-                  // 90
-                  let bottomPossible: number = i < cells.length - column ? 1 : 0;
-                  // 15 % 10 = 5 parcontre 10 % 10 = 0
-                  let leftPossible: number = i % column !== 0 ? 1 : 0;
-                  // 19 + 1 % 5)
-                  let rightPossible: number = (i + 1) % column !== 0 ? 1 : 0;
-                  // map => [haut, milieu, droit]
-                  if (topPossible && leftPossible) cells[i - column - 1].surroundingMines++;
-                  if (topPossible) cells[i - column].surroundingMines++;
-                  if (topPossible && rightPossible) cells[i - column + 1].surroundingMines++;
-                  if (leftPossible) cells[i - 1].surroundingMines++;
-                  if (rightPossible) cells[i + 1].surroundingMines++;
-                  if (bottomPossible && leftPossible) cells[i + column - 1].surroundingMines++;
-                  if (bottomPossible) cells[i + column].surroundingMines++;
-                  if (bottomPossible && rightPossible) cells[i + column + 1].surroundingMines++;
-              }
-          */
-
-            /*
-              Both Algorithm: are having the same goal: adding surrounding mines. You can comment on on off.
-          */
-            if (cells[i].mine) {
-                for (let cellIndex of Grid.cellArounds(column, cells, i)) {
-                    if(!cells[cellIndex]) {
-                        //console.log(cellIndex)
-                        //console.log(cells)
-                    }
-                    cells[cellIndex].surroundingMines++;
-                }
-            }
-        }
-
         return new Grid(column, cells);
     }
 
-    static cellArounds(
+    setMinesAround() {
+        for (let i = 0; i < this._cells.length; i++) {
+            if (this._cells[i].mine) {
+                for (let cellIndex of this.cellArounds(this._column, this._cells, i)) {
+                    this._cells[cellIndex].surroundingMines++;
+                }
+            }
+        }
+        return this;
+    }
+
+    possibleSide(targetedCell: number): Array<boolean> {
+        // Whether the neighboor cells exist: left, top, right, bottom.
+        let top = targetedCell >= this._column;
+        let bottom = !top || targetedCell < this._cells.length - this._column;
+        let left = targetedCell % this._column !== 0;
+        let right = !left || (targetedCell + 1) % this._column !== 0;
+        return [left, top, right, bottom, left];
+    }
+
+    cellArounds(
         column: number,
         cells: Array<Cell>,
         targetedCell: number
     ): Array<number> {
         // Whether the neighboor cells exist: left, top, right, bottom.
-        let top = targetedCell >= column;
+    /*    let top = targetedCell >= column;
         let bottom = !top || targetedCell < cells.length - column;
         let left = targetedCell % column !== 0;
-        let right = !left || (targetedCell + 1) % column !== 0;
-        const possibleSide = [left, top, right, bottom, left];
+        let right = !left || (targetedCell + 1) % column !== 0;*/
+        const possibleSide = this.possibleSide(targetedCell)
         const coordinate: Array<number> = [-1, -10];
         const cellsAround: Array<number> = [];
         // coordinates of neighboor cells around the targeted cell.
@@ -84,33 +65,19 @@ export class Grid {
         for (let positionCells = 0; positionCells < 8; positionCells++) {
             // Beginning middle left if it is possible.
             let isPair = positionCells % 2 === 0;
-            // moving in the truthTab (left, top, right, bottom)
-            /*
             if (isPair) {
                 positionSide++;
-            }
-            if (isPair && possibleSide[positionSide]) {
-                cellsAround.push(targetedCell + coordinate[0]);
-            } else if (
-                possibleSide[positionSide] &&
-                possibleSide[positionSide + 1]
-            ) {
-                cellsAround.push(
-                    targetedCell + (coordinate[0] + coordinate[1])
-                );
-            }
-            if (!isPair) {
-                coordinate.push(-coordinate[0]);
-                coordinate.shift();
-            }*/
-            if (isPair) {
-                positionSide++;
-                if(possibleSide[positionSide]){ cellsAround.push(targetedCell + coordinate[0]) }
-
+                if (possibleSide[positionSide]) {
+                    cellsAround.push(targetedCell + coordinate[0]);
+                }
             } else {
-                if (possibleSide[positionSide] && possibleSide[positionSide + 1]) {
+                if (
+                    possibleSide[positionSide] &&
+                    possibleSide[positionSide + 1]
+                ) {
                     cellsAround.push(
-                        targetedCell + (coordinate[0] + coordinate[1]))
+                        targetedCell + (coordinate[0] + coordinate[1])
+                    );
                 }
                 coordinate.push(-coordinate[0]);
                 coordinate.shift();
@@ -153,19 +120,18 @@ export class Grid {
         return this._cells[this._column * y + x];
     }
 
-    sendActionToCell(cellIndex: number, action: CellAction): Grid {
+    sendActionToCell(targetedCell: number, action: CellAction): Grid {
         const cells = [...this._cells];
-        const cell = cells[cellIndex];
-        cells[cellIndex] = cell[action]();
-        this.digAllZero(cellIndex).map(index => {
-            const c = cells[index];
-            if (!c.mine) {
-                cells[index] = c[action]();
-            } else {
-                //console.log(index)
-            }
-        });
-
+        const cell = cells[targetedCell];
+        cells[targetedCell] = cell[action]();
+        if (!cell.surroundingMines && action != 'flag') {
+            this.cellArounds(this._column, cells, targetedCell).map(index => {
+                const c = cells[index];
+                if (!c.mine) {
+                    cells[index] = c[action]();
+                }
+            });
+        }
         return new Grid(this._column, cells);
     }
 
@@ -174,10 +140,6 @@ export class Grid {
     }
 
     get gridLength() {
-        return this._cells.length
-    }
-
-    digAllZero(index: number): Array<number> {
-        return Grid.cellArounds(this._column, this._cells, index);
+        return this._cells.length;
     }
 }

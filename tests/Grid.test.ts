@@ -46,14 +46,14 @@ describe(Grid, () => {
         const iterator = Array.from(Array(row * column));
 
         test('it create a grid with cells', () => {
-            const grid = Grid.generate(row, column, 0);
+            const grid = Grid.generate(row, column, 0).setMinesAround();
             iterator.forEach((_, index) => {
                 expect(grid.cellByIndex(index)).toBeDefined();
             });
         });
 
         test('it create a grid without any mines', () => {
-            const grid = Grid.generate(row, column, 0);
+            const grid = Grid.generate(row, column, 0).setMinesAround();
             iterator.forEach((_, index) => {
                 const cell = grid.cellByIndex(index);
                 if (cell) {
@@ -64,7 +64,7 @@ describe(Grid, () => {
         });
 
         test('it create a grid full of mines', () => {
-            const grid = Grid.generate(row, column, row * column);
+            const grid = Grid.generate(row, column, row * column).setMinesAround();
             iterator.forEach((_, index) => {
                 const cell = grid.cellByIndex(index);
                 if (cell) {
@@ -75,7 +75,7 @@ describe(Grid, () => {
         });
 
         test('it create a grid with 10 mines out of 100 cells', () => {
-            const grid = Grid.generate(row, column, 10);
+            const grid = Grid.generate(row, column, 10).setMinesAround();
             const mineCount = iterator.reduce((count, _, index) => {
                 const cell = grid.cellByIndex(index);
                 if (cell === undefined) return count;
@@ -92,7 +92,7 @@ describe(Grid, () => {
         const row: number = 10;
         const column: number = 10;
         const iterator = Array.from(Array(row * column));
-        const grid = Grid.generate(row, column, 10);
+        const grid = Grid.generate(row, column, 10).setMinesAround();
         function checkAroundsAMine(
             _: any,
             i: number,

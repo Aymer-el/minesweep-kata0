@@ -16,8 +16,6 @@ export const Grid: React.FunctionComponent = () => {
         (isVictorious(grid) && 'victory') ||
         false;
 
-    console.log(gameOver)
-
     return (
         <React.Fragment>
             <Game gameOver={gameOver} />

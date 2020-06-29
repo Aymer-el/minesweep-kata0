@@ -6,15 +6,15 @@ describe('Rules', () => {
     test('a new game is neither lost or won', async () => {
         // La grandeur d'un démineur doit être au minimum de 2
         // car sinon il n'y pas de jeu.
-        let grid = Grid.generate(10, 10, 10);
+        let grid = Grid.generate(10, 10, 10).setMinesAround();
         expect(isVictorious(grid)).toBe(false);
 
-        grid = Grid.generate(10, 10, 10);
+        grid = Grid.generate(10, 10, 10).setMinesAround();
         expect(isVictorious(grid)).toBe(false);
     });
 
     test('a game is lost if a cell with a mine has been dug', async () => {
-        let grid = Grid.generate(10, 10, 10);
+        let grid = Grid.generate(10, 10, 10).setMinesAround();
         expect(isDefeated(grid)).toBe(false);
         expect(isVictorious(grid)).toBe(false);
 
@@ -34,7 +34,7 @@ describe('Rules', () => {
     });
 
     test('a game is won if every cell without mine has been dug', async () => {
-        let grid = Grid.generate(10, 10, 10);
+        let grid = Grid.generate(10, 10, 10).setMinesAround();
         expect(isDefeated(grid)).toBe(false);
         expect(isVictorious(grid)).toBe(false);
         for (let i = 0; i < 100; i++){

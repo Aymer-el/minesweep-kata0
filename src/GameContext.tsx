@@ -14,7 +14,7 @@ type GridCustomHook = [
 ];
 
 const initialContext: GameContextProps = {
-    grid: Grid.generate(10, 10, 10),
+    grid: Grid.generate(10, 10, 10).setMinesAround(),
     updateGridCellStatus: () => {},
 };
 
