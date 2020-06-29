@@ -12,8 +12,11 @@ export const Grid: React.FunctionComponent = () => {
     };
 
     const gameOver =
-        await isDefeated(grid) ? 'defeat' : (await isVictorious(grid) ? 'victory': false);
-        console.log(isDefeated(grid))
+        (isDefeated(grid) && 'defeat') ||
+        (isVictorious(grid) && 'victory') ||
+        false;
+
+    console.log(gameOver)
 
     return (
         <React.Fragment>
