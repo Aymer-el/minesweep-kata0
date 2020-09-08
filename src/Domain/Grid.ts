@@ -3,8 +3,8 @@ import { Cell, CellAction } from './Cell';
 export type Cells = Array<Cell>;
 
 export class Position {
-    static line: number = 0;
-    static column: number = 0;
+    line: number = 0;
+    column: number = 0;
 }
 
 
@@ -36,66 +36,56 @@ export class Grid {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
                 for (let area of this.cellArounds(this._column, this._cells, i)) {
-                    for (let cellIdex of area) {
-                        this._cells[cellIdex].surroundingMines++;
-                    }
+                    this._cells[area].surroundingMines++;
                 }
             }
         }
         return this;
     }
 
-    possibleSide(targetedCell: number): Array<boolean> {
-        // Whether the neighboor cells exist: left, top, right, bottom.
-        let top = targetedCell >= this._column;
-        let bottom = !top || targetedCell < this._cells.length - this._column;
-        let left = targetedCell % this._column !== 0;
-        let right = !left || (targetedCell + 1) % this._column !== 0;
-        return [left, top, right, bottom, left];
-    }
-
     indexTo2d(targetedCell: number) {
-        Position.line = (targetedCell + 1 / this._column);
-        Position.column = (targetedCell +1) % this._column;
+        const pos = new Position();
+        pos.line = Math.ceil((targetedCell) / this._column);
+        pos.column = Math.ceil((targetedCell) % this._column);
+        return pos
     }
 
-    index2dTo1d(first: number, second: number): number {
-        return Position.line * Position.column + Position.line
+    isPossible(position: Position): boolean {
+        return position.line >= 0
+            && position.line < this._cells.length / this._column
+            && position.column >= 0
+            && position.column < this._column
+    }
+
+    index2dTo1d(pos: Position): number {
+        return pos.line * pos.column + pos.line
     }
 
     cellArounds(
         column: number,
         cells: Array<Cell>,
         targetedCell: number
-    ): number[][] {
-        // Whether the neighboor cells exist: left, top, right, bottom.
-    /*    let top = targetedCell >= column;
-        let bottom = !top || targetedCell < cells.length - column;
-        let left = targetedCell % column !== 0;
-        let right = !left || (targetedCell + 1) % column !== 0;*/
-        const possibleSide = this.possibleSide(targetedCell);
+    ): number[] {
+        // position of the pointer around a case. It records the number of step to reach a neighbor case.
         const coordinate: Array<number> = [-1, -10];
-        let cellsAround: number[][] = [];
-        // coordinates of neighboor cells around the targeted cell.
-        let positionSide = -1;
-        // Stocking possible neighboor cells with a for loop around the targeted cell.
+        let cellsAround: number[] = [];
+        // Stocking possible neighbor cells with a for loop around the targeted cell.
         for (let positionCells = 0; positionCells < 8; positionCells++) {
             // Beginning middle left if it is possible.
             let isPair = positionCells % 2 === 0;
            // targetedCell * this._column + column
             if (isPair) {
-                positionSide++;
-                if (possibleSide[positionSide]) {
-                    cellsAround.push([targetedCell + coordinate[0]]);
+                if (this.isPossible(this.indexTo2d(targetedCell + coordinate[0]))) {
+                    cellsAround.push(targetedCell + coordinate[0]);
                 }
             } else {
                 if (
-                    possibleSide[positionSide] &&
-                    possibleSide[positionSide + 1]
+                    this.isPossible(this.indexTo2d(targetedCell + coordinate[0])) &&
+                    this.isPossible(this.indexTo2d(targetedCell + coordinate[1]))
                 ) {
-                    cellsAround.push([
+                    cellsAround.push(
                         targetedCell + (coordinate[0] + coordinate[1])
-                    ]);
+                    );
                 }
                 coordinate.push(-coordinate[0]);
                 coordinate.shift();
@@ -143,14 +133,11 @@ export class Grid {
         const cell = cells[targetedCell];
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
-            this.cellArounds(this._column, cells, targetedCell).map(areas => {
-                areas.map((index) => {
+            this.cellArounds(this._column, cells, targetedCell).map(index => {
                     const c = cells[index];
                     if (!c.mine) {
                         cells[index] = c[action]();
                     }
-                })
-                console.log(areas)
             });
         }
         return new Grid(this._column, cells);

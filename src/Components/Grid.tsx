@@ -36,9 +36,7 @@ export const Grid: React.FunctionComponent = () => {
                             handleClick(index, ev.button)
                         }
                         isCellOddColor={
-                            (Math.floor(index / 10) + 1 + index) % 2 == 0
-                                ? false
-                                : true
+                            (Math.floor(index / 10) + 1 + index) % 2 != 0
                         }
                         surroundingMines={cell.surroundingMines}
                     />
