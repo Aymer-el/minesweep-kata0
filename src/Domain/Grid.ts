@@ -2,6 +2,12 @@ import { Cell, CellAction } from './Cell';
 
 export type Cells = Array<Cell>;
 
+export class Position {
+    static line: number = 0;
+    static column: number = 0;
+}
+
+
 export class Grid {
     [key: number]: number;
     private _column: number;
@@ -29,8 +35,10 @@ export class Grid {
     setMinesAround() {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
-                for (let cellIndex of this.cellArounds(this._column, this._cells, i)) {
-                    this._cells[cellIndex].surroundingMines++;
+                for (let area of this.cellArounds(this._column, this._cells, i)) {
+                    for (let cellIdex of area) {
+                        this._cells[cellIdex].surroundingMines++;
+                    }
                 }
             }
         }
@@ -46,38 +54,48 @@ export class Grid {
         return [left, top, right, bottom, left];
     }
 
+    indexTo2d(targetedCell: number) {
+        Position.line = (targetedCell + 1 / this._column);
+        Position.column = (targetedCell +1) % this._column;
+    }
+
+    index2dTo1d(first: number, second: number): number {
+        return Position.line * Position.column + Position.line
+    }
+
     cellArounds(
         column: number,
         cells: Array<Cell>,
         targetedCell: number
-    ): Array<number> {
+    ): number[][] {
         // Whether the neighboor cells exist: left, top, right, bottom.
     /*    let top = targetedCell >= column;
         let bottom = !top || targetedCell < cells.length - column;
         let left = targetedCell % column !== 0;
         let right = !left || (targetedCell + 1) % column !== 0;*/
-        const possibleSide = this.possibleSide(targetedCell)
+        const possibleSide = this.possibleSide(targetedCell);
         const coordinate: Array<number> = [-1, -10];
-        const cellsAround: Array<number> = [];
+        let cellsAround: number[][] = [];
         // coordinates of neighboor cells around the targeted cell.
         let positionSide = -1;
         // Stocking possible neighboor cells with a for loop around the targeted cell.
         for (let positionCells = 0; positionCells < 8; positionCells++) {
             // Beginning middle left if it is possible.
             let isPair = positionCells % 2 === 0;
+           // targetedCell * this._column + column
             if (isPair) {
                 positionSide++;
                 if (possibleSide[positionSide]) {
-                    cellsAround.push(targetedCell + coordinate[0]);
+                    cellsAround.push([targetedCell + coordinate[0]]);
                 }
             } else {
                 if (
                     possibleSide[positionSide] &&
                     possibleSide[positionSide + 1]
                 ) {
-                    cellsAround.push(
+                    cellsAround.push([
                         targetedCell + (coordinate[0] + coordinate[1])
-                    );
+                    ]);
                 }
                 coordinate.push(-coordinate[0]);
                 coordinate.shift();
@@ -125,11 +143,14 @@ export class Grid {
         const cell = cells[targetedCell];
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
-            this.cellArounds(this._column, cells, targetedCell).map(index => {
-                const c = cells[index];
-                if (!c.mine) {
-                    cells[index] = c[action]();
-                }
+            this.cellArounds(this._column, cells, targetedCell).map(areas => {
+                areas.map((index) => {
+                    const c = cells[index];
+                    if (!c.mine) {
+                        cells[index] = c[action]();
+                    }
+                })
+                console.log(areas)
             });
         }
         return new Grid(this._column, cells);
@@ -139,7 +160,4 @@ export class Grid {
         return this._column;
     }
 
-    get gridLength() {
-        return this._cells.length;
-    }
 }
