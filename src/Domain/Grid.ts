@@ -35,7 +35,7 @@ export class Grid {
     setMinesAround() {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
-                for (let area of this.cellArounds(this._column, this._cells, i)) {
+                for (let area of this.cellArounds(i)) {
                     this._cells[area].surroundingMines++;
                 }
             }
@@ -62,8 +62,6 @@ export class Grid {
     }
 
     cellArounds(
-        column: number,
-        cells: Array<Cell>,
         targetedCell: number
     ): number[] {
         // position of the pointer around a case. It records the number of step to reach a neighbor case.
@@ -133,7 +131,7 @@ export class Grid {
         const cell = cells[targetedCell];
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
-            this.cellArounds(this._column, cells, targetedCell).map(index => {
+            this.cellArounds(targetedCell).map(index => {
                     const c = cells[index];
                     if (!c.mine) {
                         cells[index] = c[action]();
