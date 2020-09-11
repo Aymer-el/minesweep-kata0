@@ -84,7 +84,7 @@ export class Grid {
         const a = 0.6;
         const b = 6.25;
         const r = 4;
-        
+
 
     }
 
@@ -97,7 +97,7 @@ export class Grid {
         if(cellsAround.length < this._column) {
             // position of the pointer around a case. It records the number of step to reach a neighbor case.
             const coordinate: Array<number> = [-1, -SetUp.column];
-            // Stocking possible neighbors' cells with a for loop around the targeted cell.
+            // Stocking possible neighbors' cells with a for loop around the targeted cell.//
             for (let positionCells = 0; positionCells < 8; positionCells++) {
                 // Beginning middle left if it is possible.
                 let isPair = positionCells % 2 === 0;
