@@ -1,4 +1,4 @@
-export type CellStatus = 'untouched' | 'flagged' | 'dug' | 'detonated';
+export type CellStatus = 'untouched' | 'flagged' | 'dug' | 'detonated' | 'debug';
 export type CellAction = 'dig' | 'flag';
 
 export class Cell {

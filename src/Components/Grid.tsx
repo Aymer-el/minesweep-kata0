@@ -31,7 +31,7 @@ export const Grid: React.FunctionComponent = () => {
                 {grid.map((cell, index) => (
                     <Cell
                         key={index}
-                        status={cell.status}
+                        status='debug'
                         onclick={(ev: MouseEvent) =>
                             handleClick(index, ev.button)
                         }
@@ -39,6 +39,7 @@ export const Grid: React.FunctionComponent = () => {
                             (Math.floor(index / 10) + 1 + index) % 2 != 0
                         }
                         surroundingMines={cell.surroundingMines}
+                        mine={cell.mine}
                     />
                 ))}
             </div>

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --open",
-    "test": "jest --verbose"
+    "test": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "author": "Aymeric Figerou <fi.aymeric@gmail.com>, Antoine Lépée <antoine@evaneos.com>",
   "devDependencies": {

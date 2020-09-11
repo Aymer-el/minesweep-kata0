@@ -1,6 +1,6 @@
 import React from 'react';
 import { CellAction } from './Domain/Cell';
-import { Grid } from './Domain/Grid';
+import { Grid, SetUp } from './Domain/Grid';
 
 type GameContextProps = {
     grid: Grid;
@@ -14,7 +14,7 @@ type GridCustomHook = [
 ];
 
 const initialContext: GameContextProps = {
-    grid: Grid.generate(10, 10, 10).setMinesAround(),
+    grid: Grid.generate(SetUp.row, SetUp.column, SetUp.minesCount).setMinesAround(),
     updateGridCellStatus: () => {},
 };
 

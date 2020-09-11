@@ -81,7 +81,7 @@ describe(Grid, () => {
                 if (cell === undefined) return count;
 
                 const dugCell = cell.dig();
-                return dugCell.detonated === true ? count + 1 : count;
+                return dugCell.detonated ? count + 1 : count;
             }, 0);
 
             expect(mineCount).toBe(10);
@@ -89,8 +89,8 @@ describe(Grid, () => {
     });
 
     describe('checks the total of surrounding mines (ab: totalSurroundingMines)', () => {
-        const row: number = 10;
-        const column: number = 10;
+        const row: number = 5;
+        const column: number = 5;
         const iterator = Array.from(Array(row * column));
         const grid = Grid.generate(row, column, 10).setMinesAround();
         function checkAroundsAMine(
@@ -105,53 +105,55 @@ describe(Grid, () => {
                 currentCase.surroundingMines === totalSurroundingMines &&
                 !currentCase.mine
             ) {
-                // 0 à 9
-                let topPossible: number = i >= column ? 1 : 0;
-                // 90
-                let bottomPossible: number = i < column * row - column ? 1 : 0;
-                // 15 % 10 = 5 parcontre 10 % 10 = 0
-                let leftPossible: number = i % column !== 0 ? 1 : 0;
-                // 19 + 1 % 5)
-                let rightPossible: number = (i + 1) % column !== 0 ? 1 : 0;
-                // map => [haut, milieu, droit]
-
-                /*
-                console.log('-------------')
-                console.log(currentCase, i);
-
-                if(topPossible && cell && +cell.mine) {
-                  console.log(cell, (i - column))
-                }
-                */
+                // des cases 0 à 9
+                let topPossible: boolean = i >= column;
+                // des cases 90 à 99
+                let bottomPossible: boolean = !topPossible || i < column * row - column;
+                // If Modulo is equal to 0, it is not possible to go right 10 % 10 === 0. not possible
+                let leftPossible: boolean = i % column !== 0;
+                // If Modulo + 1 is equal to 9, it is not possible
+                let rightPossible: boolean = !leftPossible || (i + 1) % column !== 0;
 
                 // top left
                 let cell = grid.cellByIndex(i - column - 1);
-                if (topPossible && leftPossible && cell)
+                if (topPossible && leftPossible && cell) {
                     countMine += +cell.mine;
+                }
                 // top
                 cell = grid.cellByIndex(i - column);
-                if (topPossible && cell) countMine += +cell.mine;
+                if (topPossible && cell){
+                    countMine += +cell.mine;
+                }
                 // top right
                 cell = grid.cellByIndex(i - column + 1);
-                if (topPossible && rightPossible && cell)
+                if (topPossible && rightPossible && cell) {
                     countMine += +cell.mine;
+                }
                 // left
                 cell = grid.cellByIndex(i - 1);
-                if (leftPossible && cell) countMine += +cell.mine;
+                if (leftPossible && cell) {
+                    countMine += +cell.mine;
+                }
                 // right
                 cell = grid.cellByIndex(i + 1);
-                if (rightPossible && cell) countMine += +cell.mine;
+                if (rightPossible && cell) {
+                    countMine += +cell.mine;
+                }
                 // bottom right
                 cell = grid.cellByIndex(i + column + 1);
-                if (bottomPossible && rightPossible && cell)
+                if (bottomPossible && rightPossible && cell) {
                     countMine += +cell.mine;
+                }
                 // bottom
                 cell = grid.cellByIndex(i + column);
-                if (bottomPossible && cell) countMine += +cell.mine;
+                if (bottomPossible && cell){
+                    countMine += +cell.mine;
+                }
                 // bottom left
                 cell = grid.cellByIndex(i + column - 1);
-                if (bottomPossible && leftPossible && cell)
+                if (bottomPossible && leftPossible && cell) {
                     countMine += +cell.mine;
+                }
 
                 expect(countMine).toBe(totalSurroundingMines);
             }
@@ -161,8 +163,12 @@ describe(Grid, () => {
         // expNumber expected number of surrounding Mines
         test('expected number of surrounding mines', () => {
             for (let expectMines = 0; expectMines < 8; expectMines++) {
-                iterator.forEach((_: any, i: number) =>
-                    checkAroundsAMine(_, i, expectMines)
+                iterator.forEach((_: any, i: number) => {
+                        const refCell = grid.cellByIndex(expectMines)
+                        if(refCell) {
+                            checkAroundsAMine(_, i, refCell.surroundingMines)
+                        }
+                    }
                 );
             }
         });
