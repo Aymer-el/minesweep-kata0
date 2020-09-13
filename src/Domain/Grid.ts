@@ -40,9 +40,11 @@ export class Grid {
     setMinesAround() {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
-                const areas = this.getNeighborCells(1, i);
-                if(areas) areas.map((area) =>  {
-                    for (let index of area) {
+                const area = this.getNeighborCells(1, i);
+                console.log('mines at', i);
+                console.log('areas at', area);
+                if(area) area.map((index) =>  {
+                    if(this._cells[index].mine && index != i) {
                         this._cells[index].surroundingMines++;
                     }
                 })
@@ -78,54 +80,69 @@ export class Grid {
     index2dTo1d(pos: Position): number {
         return pos.line * pos.column + pos.line
     }
-    cellsAround: number[][] = [];
-
-    finding(coordinate: Array<number>) {
-        const a = 0.6;
-        const b = 6.25;
-        const r = 4;
-
-
-    }
 
     getNeighborCells(
         beginning: number,
         refCellNumber: number
-    ): number[][] | undefined {
+    ): number[] | undefined {
         let cellsAround: number[] = [];
-        const targetedCell = this.indexTo2d(refCellNumber);
-        if(cellsAround.length < this._column) {
+        const refCell = this.indexTo2d(refCellNumber);
             // position of the pointer around a case. It records the number of step to reach a neighbor case.
-            const coordinate: Array<number> = [-1, -SetUp.column];
+            let coordinate: Array<number> = [-1,-SetUp.column];
             // Stocking possible neighbors' cells with a for loop around the targeted cell.//
-            for (let positionCells = 0; positionCells < 8; positionCells++) {
-                // Beginning middle left if it is possible.
-                let isPair = positionCells % 2 === 0;
-                // targetedCell * this._column + column
-                if (isPair) {
-                    if (this.isPossible(
-                        this.indexTo2d(refCellNumber + coordinate[0]),
-                        targetedCell
-                    )) {
-                        cellsAround.push(refCellNumber + coordinate[0]);
-                    }
-                } else {
-                    if (
-                        this.isPossible(this.indexTo2d(refCellNumber + coordinate[1] + coordinate[0]),
-                            targetedCell)
-                        &&
-                        this.isPossible(this.indexTo2d(refCellNumber + coordinate[0]),
-                            targetedCell)
-                    ) {
-                        cellsAround.push(
-                            refCellNumber + (coordinate[0] + coordinate[1])
-                        );
-                    }
-                    coordinate.push(-coordinate[0]);
-                    coordinate.shift();
+        /*const coordinate: Array<number> = [-1, -10];
+        const cellsAround: Array<number> = [];
+        // coordinates of neighboor cells around the targeted cell.
+        let positionSide = -1;
+        // Stocking possible neighboor cells with a for loop around the targeted cell.
+        for (let positionCells = 0; positionCells < 8; positionCells++) {
+            // Beginning middle left if it is possible.
+            let isPair = positionCells % 2 === 0;
+            if (isPair) {
+                positionSide++;
+                if (possibleSide[positionSide]) {
+                    cellsAround.push(targetedCell + coordinate[0]);
                 }
+            } else {
+                if (
+                    possibleSide[positionSide] &&
+                    possibleSide[positionSide + 1]
+                ) {
+                    cellsAround.push(
+                        targetedCell + (coordinate[0] + coordinate[1])
+                    );
+                }
+                coordinate.push(-coordinate[0]);
+                coordinate.shift();
             }
-            return [cellsAround];
+        }
+        return cellsAround;*/
+            for (let i = 0; i < 2; i++) {
+                // First loop from 0 à 3
+                // Second loop from 4 to 7
+                const isIPair = i % 2 === 0;
+                if (isIPair) {
+                    coordinate = [-1, -SetUp.column]
+                } else {
+                    coordinate = [-1, SetUp.column]
+                }
+                let targetedCell: number = refCellNumber;
+                for(let j= -1; j < 4; j++) {
+                    // Beginning middle left if it is possible.
+                    let isJPair = j % 2 === 0;
+                    // targetedCell * this._column + column
+                    if (isJPair) {
+                       targetedCell = refCellNumber + coordinate[0];
+                        coordinate.push(-coordinate[0]);
+                        coordinate.shift();
+                    } else {
+                        targetedCell = refCellNumber + (coordinate[0] + coordinate[1])
+                    }
+                }
+                if (this.isPossible(this.indexTo2d(targetedCell), refCell)) {
+                    cellsAround.push(targetedCell);
+                }
+            return cellsAround;
         }
     }
 
@@ -169,15 +186,13 @@ export class Grid {
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
             // @ts-ignore
-            const areas = this.getNeighborCells(1, targetedCell);
-            if(areas) areas.map(area => {
-                for(let index of area) {
-                    const c = cells[index];
-                    if (!c.mine) {
-                        cells[index] = c[action]();
-                    }
+            const area = this.getNeighborCells(1, targetedCell);
+            if(area) for(let index of area) {
+                const c = cells[index];
+                if (!c.mine) {
+                    cells[index] = c[action]();
                 }
-            });
+            }
         }
         return new Grid(this._column, cells);
     }
