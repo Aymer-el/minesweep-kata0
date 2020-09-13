@@ -70,7 +70,7 @@ export const Cell: React.FunctionComponent<CellProps> = props => {
             style={cellStyle(props.status, props.isCellOddColor)}
         >
             {emojis[props.status]}
-            {props.status === 'dug' ? props.surroundingMines : ''}
+            { props.status === 'dug' ? props.surroundingMines : ''}
             { props.status === 'debug' ? props.surroundingMines: ''}
             { props.status === 'debug' && props.mine ? emojis['detonated']: ''}
         </div>
