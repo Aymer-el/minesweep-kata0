@@ -18,7 +18,7 @@ describe(Grid, () => {
                 unexpected,
             ]);
 
-            expect(grid.cellByCoodinates(0, 0)).toBe(expected);
+            expect(grid.cellByCoordinates(0, 0)).toBe(expected);
         });
 
         test('it get the last cell in grid when asking for x:3 y:1', () => {
@@ -35,7 +35,7 @@ describe(Grid, () => {
                 expected,
             ]);
 
-            const cell = grid.cellByCoodinates(3, 1);
+            const cell = grid.cellByCoordinates(3, 1);
             expect(cell).toBe(expected);
         });
     });
@@ -96,7 +96,7 @@ describe(Grid, () => {
         const grid = Grid.generate(row, column, 10).setMinesAround();
         function isHavingGoodMinesIndication() {
             // around a case having surrounding mines
-            // use the grid.facto() to find whether surrounding cells have the
+            // use the grid.findingCell() to find whether surrounding cells have the
             // good indication
 
         }
@@ -105,11 +105,10 @@ describe(Grid, () => {
         // expNumber expected number of surrounding Mines
         test('expected number of surrounding mines', () => {
                 iterator.forEach((_: any, i: number) => {
-                       const refCell = grid.cellByIndex(expectMines);
+                       const refCell = grid.cellByIndex(i);
                        if(refCell){
-
                        }
-                            //isHavingGoodMinesIndication(_, i, refCell.surroundingMines)
+                      //isHavingGoodMinesIndication(_, i, refCell.surroundingMines)
             })
         })}
 )});

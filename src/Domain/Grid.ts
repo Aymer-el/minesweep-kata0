@@ -2,11 +2,6 @@ import { Cell, CellAction } from './Cell';
 
 export type Cells = Array<Cell>;
 
-export class Position {
-    line: number = 0;
-    column: number = 0;
-}
-
 export const SetUp = {
     row: 10,
     column: 10,
@@ -15,8 +10,8 @@ export const SetUp = {
 
 export class Grid {
     [key: number]: number;
-    private _column: number;
-    private _cells: Cells;
+    private readonly _column: number;
+    private readonly _cells: Cells;
 
     static generate(row: number, column: number, minesCount: number): Grid {
         const length = row * column;
@@ -40,55 +35,32 @@ export class Grid {
     setMinesAround() {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
-                console.log('mines at', i);
-                this.getNeighborCells(1, i).map((index) =>  {
-                    if(this._cells[index]) this._cells[index].surroundingMines++;
+                this.getNeighborCells(1, i).map((area) =>  {
+                    area.map((index) => {
+                        if(this._cells[index]) this._cells[index].surroundingMines++;
+                    })
                 })
             }
         }
         return this;
     }
 
-    indexTo2d(targetedCell: number) {
-        const pos = new Position();
-        pos.line = Math.floor(targetedCell / this._column);
-        pos.column = Math.floor(targetedCell % this._column);
-        return pos
-    }
 
-    isPossible(isPossibleCell: Position, refCell: Position): boolean {
-        return isPossibleCell.line >= 0
-            && isPossibleCell.line < (this._cells.length / this._column)
-            && isPossibleCell.column >= 0
-            && isPossibleCell.column < this._column
-           /* && isPossibleCell.line >= refCell.line - 1
-            && isPossibleCell.line <= refCell.line + 1
-            && isPossibleCell.column >= refCell.column - 1
-            && isPossibleCell.column <= refCell.column + 1*/
-
-    }
-    /*
-   let top = targetedCell >= this._column;
-   let bottom = !top || targetedCell < this._cells.length - this._column;
-   let left = targetedCell % this._column !== 0;
-   let right = !left || (targetedCell + 1) % this._column !== 0;
-    */
-
-    facto(i: number, j:number): number {
+    findingCell(i: number, j:number): number {
         return (j * this._column) + i
     }
 
     getNeighborCells(
         beginning: number,
         refCellNumber: number
-    ): number[] {
+    ): number[][] {
         let cellsAround: number[] = [];
         for (let j = -1; j <= 1; j++) {
             for (let i = -1; i <= 1; i++) {
-                cellsAround.push(this.facto(i, j) +refCellNumber)
+                cellsAround.push(this.findingCell(i, j) +refCellNumber)
             }
         }
-        return cellsAround;
+        return [cellsAround];
 
     }
 
@@ -113,7 +85,7 @@ export class Grid {
 
     map(
         callbackfn: (value: Cell, index: number, array: Cell[]) => {},
-        thisArg?: any
+      //  thisArg?: any
     ) {
         return this._cells.map(callbackfn);
     }
@@ -122,7 +94,7 @@ export class Grid {
         return this._cells[index];
     }
 
-    cellByCoodinates(x: number, y: number): Cell | undefined {
+    cellByCoordinates(x: number, y: number): Cell | undefined {
         return this._cells[this._column * y + x];
     }
 
@@ -132,11 +104,14 @@ export class Grid {
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
             // @ts-ignore
-            const area = this.getNeighborCells(1, targetedCell);
-            if(area) for(let index of area) {
-                const c = cells[index];
-                if (c && !c.mine) {
-                    cells[index] = c[action]();
+            const areas = this.getNeighborCells(1, targetedCell);
+            // while areas
+            for(let area of areas) {
+                for (let index of area) {
+                    const c = cells[index];
+                    if (c && !c.mine) {
+                        cells[index] = c[action]();
+                    }
                 }
             }
         }
