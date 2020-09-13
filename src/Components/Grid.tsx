@@ -31,7 +31,7 @@ export const Grid: React.FunctionComponent = () => {
                 {grid.map((cell, index) => (
                     <Cell
                         key={index}
-                        status='debug'
+                        status={cell.status}
                         onclick={(ev: MouseEvent) =>
                             handleClick(index, ev.button)
                         }

@@ -88,89 +88,28 @@ describe(Grid, () => {
         });
     });
 
-    describe('checks the total of surrounding mines (ab: totalSurroundingMines)', () => {
+    describe('checks if the number indicated is equals to the' +
+        ' real total of surrounding mines', () => {
         const row: number = 5;
         const column: number = 5;
         const iterator = Array.from(Array(row * column));
         const grid = Grid.generate(row, column, 10).setMinesAround();
-        function checkAroundsAMine(
-            _: any,
-            i: number,
-            totalSurroundingMines: number
-        ) {
-            let countMine: number = 0;
-            const currentCase = grid.cellByIndex(i);
-            if (
-                currentCase &&
-                currentCase.surroundingMines === totalSurroundingMines &&
-                !currentCase.mine
-            ) {
-                // des cases 0 à 9
-                let topPossible: boolean = i >= column;
-                // des cases 90 à 99
-                let bottomPossible: boolean = !topPossible || i < column * row - column;
-                // If Modulo is equal to 0, it is not possible to go right 10 % 10 === 0. not possible
-                let leftPossible: boolean = i % column !== 0;
-                // If Modulo + 1 is equal to 9, it is not possible
-                let rightPossible: boolean = !leftPossible || (i + 1) % column !== 0;
+        function isHavingGoodMinesIndication() {
+            // around a case having surrounding mines
+            // use the grid.facto() to find whether surrounding cells have the
+            // good indication
 
-                // top left
-                let cell = grid.cellByIndex(i - column - 1);
-                if (topPossible && leftPossible && cell) {
-                    countMine += +cell.mine;
-                }
-                // top
-                cell = grid.cellByIndex(i - column);
-                if (topPossible && cell){
-                    countMine += +cell.mine;
-                }
-                // top right
-                cell = grid.cellByIndex(i - column + 1);
-                if (topPossible && rightPossible && cell) {
-                    countMine += +cell.mine;
-                }
-                // left
-                cell = grid.cellByIndex(i - 1);
-                if (leftPossible && cell) {
-                    countMine += +cell.mine;
-                }
-                // right
-                cell = grid.cellByIndex(i + 1);
-                if (rightPossible && cell) {
-                    countMine += +cell.mine;
-                }
-                // bottom right
-                cell = grid.cellByIndex(i + column + 1);
-                if (bottomPossible && rightPossible && cell) {
-                    countMine += +cell.mine;
-                }
-                // bottom
-                cell = grid.cellByIndex(i + column);
-                if (bottomPossible && cell){
-                    countMine += +cell.mine;
-                }
-                // bottom left
-                cell = grid.cellByIndex(i + column - 1);
-                if (bottomPossible && leftPossible && cell) {
-                    countMine += +cell.mine;
-                }
-
-                expect(countMine).toBe(totalSurroundingMines);
-            }
         }
         //const iterator = Array.from(Array(row * column));
 
         // expNumber expected number of surrounding Mines
         test('expected number of surrounding mines', () => {
-            for (let expectMines = 0; expectMines < 8; expectMines++) {
                 iterator.forEach((_: any, i: number) => {
-                        const refCell = grid.cellByIndex(expectMines)
-                        if(refCell) {
-                            checkAroundsAMine(_, i, refCell.surroundingMines)
-                        }
-                    }
-                );
-            }
-        });
-    });
-});
+                       const refCell = grid.cellByIndex(expectMines);
+                       if(refCell){
+
+                       }
+                            //isHavingGoodMinesIndication(_, i, refCell.surroundingMines)
+            })
+        })}
+)});

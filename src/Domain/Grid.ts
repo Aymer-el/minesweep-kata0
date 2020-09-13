@@ -51,18 +51,21 @@ export class Grid {
 
     indexTo2d(targetedCell: number) {
         const pos = new Position();
-        pos.line = targetedCell > 0 ? Math.floor((targetedCell / this._column)) : -1;
-        pos.column = targetedCell > 0 ? Math.floor(targetedCell % this._column) : -1;
+        pos.line = Math.floor(targetedCell / this._column);
+        pos.column = Math.floor(targetedCell % this._column);
         return pos
     }
 
     isPossible(isPossibleCell: Position, refCell: Position): boolean {
         return isPossibleCell.line >= 0
-            && isPossibleCell.line <= (this._cells.length / this._column)
-            && isPossibleCell.line >=  (refCell.line ? (refCell.line - 1): 0)
-            && isPossibleCell.column <= this._column
-            && isPossibleCell.column <= (refCell.column ? (refCell.column + 1): 0)
+            && isPossibleCell.line < (this._cells.length / this._column)
             && isPossibleCell.column >= 0
+            && isPossibleCell.column < this._column
+           /* && isPossibleCell.line >= refCell.line - 1
+            && isPossibleCell.line <= refCell.line + 1
+            && isPossibleCell.column >= refCell.column - 1
+            && isPossibleCell.column <= refCell.column + 1*/
+
     }
     /*
    let top = targetedCell >= this._column;
@@ -71,8 +74,8 @@ export class Grid {
    let right = !left || (targetedCell + 1) % this._column !== 0;
     */
 
-    index2dTo1d(pos: Position): number {
-        return pos.line * pos.column + pos.line
+    facto(i: number, j:number): number {
+        return (j * this._column) + i
     }
 
     getNeighborCells(
@@ -80,34 +83,9 @@ export class Grid {
         refCellNumber: number
     ): number[] {
         let cellsAround: number[] = [];
-        const refCell = this.indexTo2d(refCellNumber);
-        // position of the pointer around a case. It records the number of step to reach a neighbor case.
-        let coordinate: Array<number> = [-1,-SetUp.column];
-        // Stocking possible neighbors' cells with a for loop around the targeted cell.//
-        for (let i = 0; i < 2; i++) {
-            // First loop from 0 à 3
-            // Second loop from 4 to 7
-            const isIPair = i % 2 === 0;
-            if (isIPair) {
-                coordinate = [-1, -SetUp.column]
-            } else {
-                coordinate = [-1, SetUp.column]
-            }
-            let targetedCell: number = refCellNumber;
-            for(let j= -1; j < 3; j++) {
-                // Beginning middle left if it is possible.
-                let isJPair = j % 2 === 0;
-                // targetedCell * this._column + column
-                if (isJPair) {
-                   targetedCell = refCellNumber + coordinate[0] + coordinate[1];
-                } else {
-                    targetedCell = refCellNumber + (coordinate[0])
-                    coordinate.push(-coordinate[0]);
-                    coordinate.shift();
-                }
-                if (this.isPossible(this.indexTo2d(targetedCell), refCell)) {
-                    cellsAround.push(targetedCell);
-                }
+        for (let j = -1; j <= 1; j++) {
+            for (let i = -1; i <= 1; i++) {
+                cellsAround.push(this.facto(i, j) +refCellNumber)
             }
         }
         return cellsAround;
@@ -157,7 +135,7 @@ export class Grid {
             const area = this.getNeighborCells(1, targetedCell);
             if(area) for(let index of area) {
                 const c = cells[index];
-                if (!c.mine) {
+                if (c && !c.mine) {
                     cells[index] = c[action]();
                 }
             }
