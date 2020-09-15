@@ -94,15 +94,6 @@ describe(Grid, () => {
         const column: number = 5;
         const iterator = Array.from(Array(row * column));
         const grid = Grid.generate(row, column, 10).setMinesAround();
-        function isHavingGoodMinesIndication() {
-            // around a case having surrounding mines
-            // use the grid.findingCell() to find whether surrounding cells have the
-            // good indication
-
-        }
-        //const iterator = Array.from(Array(row * column));
-
-        // expNumber expected number of surrounding Mines
         test('expected number of surrounding mines', () => {
                 iterator.forEach((_: any, i: number) => {
                     const cellsWithMines = grid.getNeighborCells(i).map((cell) =>
@@ -117,7 +108,6 @@ describe(Grid, () => {
                     if(cell) {
                         expect(minesCount).toBe(cell.surroundingMines);
                     }
-                      //isHavingGoodMinesIndication(_, i, refCell.surroundingMines)
                 })
         })
     }
