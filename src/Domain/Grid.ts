@@ -3,8 +3,13 @@ import { Cell, CellAction } from './Cell';
 export type Cells = Array<Cell>;
 
 export class Position {
-    line: number = 0;
-    column: number = 0;
+    public line: number;
+    public column: number;
+
+    constructor(cell: number, column: number){
+        this.line = Math.floor(cell / column);
+        this.column = Math.floor(cell % column);
+    }
 }
 
 export const SetUp = {
@@ -15,8 +20,8 @@ export const SetUp = {
 
 export class Grid {
     [key: number]: number;
-    private _column: number;
-    private _cells: Cells;
+    private readonly _column: number;
+    private readonly _cells: Cells;
 
     static generate(row: number, column: number, minesCount: number): Grid {
         const length = row * column;
@@ -40,20 +45,17 @@ export class Grid {
     setMinesAround() {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
-                console.log('mines at', i);
-                this.getNeighborCells(1, i).map((index) =>  {
-                    if(this._cells[index]) this._cells[index].surroundingMines++;
-                })
+                this.getNeighborCells(i).map((area: number) =>  {
+                        this._cells[area].surroundingMines++;
+                    })
             }
         }
         return this;
     }
 
-    indexTo2d(targetedCell: number) {
-        const pos = new Position();
-        pos.line = Math.floor(targetedCell / this._column);
-        pos.column = Math.floor(targetedCell % this._column);
-        return pos
+
+    findingCell(i: number, j:number, refCellNumber: number): number {
+        return (j * this._column) + i + refCellNumber
     }
 
     isPossible(isPossibleCell: Position, refCell: Position): boolean {
@@ -61,31 +63,23 @@ export class Grid {
             && isPossibleCell.line < (this._cells.length / this._column)
             && isPossibleCell.column >= 0
             && isPossibleCell.column < this._column
-           /* && isPossibleCell.line >= refCell.line - 1
+            && isPossibleCell.line >= refCell.line - 1
             && isPossibleCell.line <= refCell.line + 1
+            && isPossibleCell.column <= refCell.column + 1
             && isPossibleCell.column >= refCell.column - 1
-            && isPossibleCell.column <= refCell.column + 1*/
-
-    }
-    /*
-   let top = targetedCell >= this._column;
-   let bottom = !top || targetedCell < this._cells.length - this._column;
-   let left = targetedCell % this._column !== 0;
-   let right = !left || (targetedCell + 1) % this._column !== 0;
-    */
-
-    facto(i: number, j:number): number {
-        return (j * this._column) + i
     }
 
     getNeighborCells(
-        beginning: number,
         refCellNumber: number
     ): number[] {
         let cellsAround: number[] = [];
-        for (let j = -1; j <= 1; j++) {
-            for (let i = -1; i <= 1; i++) {
-                cellsAround.push(this.facto(i, j) +refCellNumber)
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if(this.isPossible(
+                    new Position(this.findingCell(i, j, refCellNumber), this._column),
+                    new Position(refCellNumber, this._column)
+                ))
+                cellsAround.push(this.findingCell(i, j,refCellNumber))
             }
         }
         return cellsAround;
@@ -113,7 +107,7 @@ export class Grid {
 
     map(
         callbackfn: (value: Cell, index: number, array: Cell[]) => {},
-        thisArg?: any
+      //  thisArg?: any
     ) {
         return this._cells.map(callbackfn);
     }
@@ -122,7 +116,7 @@ export class Grid {
         return this._cells[index];
     }
 
-    cellByCoodinates(x: number, y: number): Cell | undefined {
+    cellByCoordinates(x: number, y: number): Cell | undefined {
         return this._cells[this._column * y + x];
     }
 
@@ -131,13 +125,14 @@ export class Grid {
         const cell = cells[targetedCell];
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
-            // @ts-ignore
-            const area = this.getNeighborCells(1, targetedCell);
-            if(area) for(let index of area) {
-                const c = cells[index];
-                if (c && !c.mine) {
-                    cells[index] = c[action]();
-                }
+            const areas = this.getNeighborCells(targetedCell);
+            console.log(areas)
+            // while areas
+            for(let area of areas) {
+                    const c = cells[area];
+                    if (c && !c.mine) {
+                        cells[area] = c[action]();
+                    }
             }
         }
         return new Grid(this._column, cells);

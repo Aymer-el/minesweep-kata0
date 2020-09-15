@@ -18,7 +18,7 @@ describe(Grid, () => {
                 unexpected,
             ]);
 
-            expect(grid.cellByCoodinates(0, 0)).toBe(expected);
+            expect(grid.cellByCoordinates(0, 0)).toBe(expected);
         });
 
         test('it get the last cell in grid when asking for x:3 y:1', () => {
@@ -35,7 +35,7 @@ describe(Grid, () => {
                 expected,
             ]);
 
-            const cell = grid.cellByCoodinates(3, 1);
+            const cell = grid.cellByCoordinates(3, 1);
             expect(cell).toBe(expected);
         });
     });
@@ -76,7 +76,7 @@ describe(Grid, () => {
 
         test('it create a grid with 10 mines out of 100 cells', () => {
             const grid = Grid.generate(row, column, 10).setMinesAround();
-            const mineCount = iterator.reduce((count, _, index) => {
+            const minesCount = iterator.reduce((count, _, index) => {
                 const cell = grid.cellByIndex(index);
                 if (cell === undefined) return count;
 
@@ -84,7 +84,7 @@ describe(Grid, () => {
                 return dugCell.detonated ? count + 1 : count;
             }, 0);
 
-            expect(mineCount).toBe(10);
+            expect(minesCount).toBe(10);
         });
     });
 
@@ -94,22 +94,22 @@ describe(Grid, () => {
         const column: number = 5;
         const iterator = Array.from(Array(row * column));
         const grid = Grid.generate(row, column, 10).setMinesAround();
-        function isHavingGoodMinesIndication() {
-            // around a case having surrounding mines
-            // use the grid.facto() to find whether surrounding cells have the
-            // good indication
-
-        }
-        //const iterator = Array.from(Array(row * column));
-
-        // expNumber expected number of surrounding Mines
         test('expected number of surrounding mines', () => {
                 iterator.forEach((_: any, i: number) => {
-                       const refCell = grid.cellByIndex(expectMines);
-                       if(refCell){
-
-                       }
-                            //isHavingGoodMinesIndication(_, i, refCell.surroundingMines)
-            })
-        })}
-)});
+                    const cellsWithMines = grid.getNeighborCells(i).map((cell) =>
+                        grid.cellByIndex(cell)).filter((cell) =>
+                        cell && cell.mine
+                    );
+                    let minesCount: number = 0;
+                    if(cellsWithMines) for(const cell of cellsWithMines) {
+                        minesCount++
+                    }
+                    const cell = grid.cellByIndex(i);
+                    if(cell) {
+                        expect(minesCount).toBe(cell.surroundingMines);
+                    }
+                })
+        })
+    }
+)}
+);
