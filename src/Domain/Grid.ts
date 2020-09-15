@@ -2,6 +2,16 @@ import { Cell, CellAction } from './Cell';
 
 export type Cells = Array<Cell>;
 
+export class Position {
+    public line: number;
+    public column: number;
+
+    constructor(cell: number, column: number){
+        this.line = Math.floor(cell / column);
+        this.column = Math.floor(cell % column);
+    }
+}
+
 export const SetUp = {
     row: 10,
     column: 10,
@@ -35,32 +45,44 @@ export class Grid {
     setMinesAround() {
         for (let i = 0; i < this._cells.length; i++) {
             if (this._cells[i].mine) {
-                this.getNeighborCells(1, i).map((area) =>  {
-                    area.map((index) => {
-                        if(this._cells[index]) this._cells[index].surroundingMines++;
+                this.getNeighborCells(i).map((area: number) =>  {
+                        this._cells[area].surroundingMines++;
                     })
-                })
             }
         }
         return this;
     }
 
 
-    findingCell(i: number, j:number): number {
-        return (j * this._column) + i
+    findingCell(i: number, j:number, refCellNumber: number): number {
+        return (j * this._column) + i + refCellNumber
+    }
+
+    isPossible(isPossibleCell: Position, refCell: Position): boolean {
+        return isPossibleCell.line >= 0
+            && isPossibleCell.line < (this._cells.length / this._column)
+            && isPossibleCell.column >= 0
+            && isPossibleCell.column < this._column
+            && isPossibleCell.line >= refCell.line - 1
+            && isPossibleCell.line <= refCell.line + 1
+            && isPossibleCell.column <= refCell.column + 1
+            && isPossibleCell.column >= refCell.column - 1
     }
 
     getNeighborCells(
-        beginning: number,
         refCellNumber: number
-    ): number[][] {
+    ): number[] {
         let cellsAround: number[] = [];
-        for (let j = -1; j <= 1; j++) {
-            for (let i = -1; i <= 1; i++) {
-                cellsAround.push(this.findingCell(i, j) +refCellNumber)
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if(this.isPossible(
+                    new Position(this.findingCell(i, j, refCellNumber), this._column),
+                    new Position(refCellNumber, this._column)
+                ))
+                cellsAround.push(this.findingCell(i, j,refCellNumber))
             }
         }
-        return [cellsAround];
+        return cellsAround;
 
     }
 
@@ -103,16 +125,14 @@ export class Grid {
         const cell = cells[targetedCell];
         cells[targetedCell] = cell[action]();
         if (!cell.surroundingMines && action != 'flag') {
-            // @ts-ignore
-            const areas = this.getNeighborCells(1, targetedCell);
+            const areas = this.getNeighborCells(targetedCell);
+            console.log(areas)
             // while areas
             for(let area of areas) {
-                for (let index of area) {
-                    const c = cells[index];
+                    const c = cells[area];
                     if (c && !c.mine) {
-                        cells[index] = c[action]();
+                        cells[area] = c[action]();
                     }
-                }
             }
         }
         return new Grid(this._column, cells);

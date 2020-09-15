@@ -76,7 +76,7 @@ describe(Grid, () => {
 
         test('it create a grid with 10 mines out of 100 cells', () => {
             const grid = Grid.generate(row, column, 10).setMinesAround();
-            const mineCount = iterator.reduce((count, _, index) => {
+            const minesCount = iterator.reduce((count, _, index) => {
                 const cell = grid.cellByIndex(index);
                 if (cell === undefined) return count;
 
@@ -84,7 +84,7 @@ describe(Grid, () => {
                 return dugCell.detonated ? count + 1 : count;
             }, 0);
 
-            expect(mineCount).toBe(10);
+            expect(minesCount).toBe(10);
         });
     });
 
@@ -105,10 +105,21 @@ describe(Grid, () => {
         // expNumber expected number of surrounding Mines
         test('expected number of surrounding mines', () => {
                 iterator.forEach((_: any, i: number) => {
-                       const refCell = grid.cellByIndex(i);
-                       if(refCell){
-                       }
+                    const cellsWithMines = grid.getNeighborCells(i).map((cell) =>
+                        grid.cellByIndex(cell)).filter((cell) =>
+                        cell && cell.mine
+                    );
+                    let minesCount: number = 0;
+                    if(cellsWithMines) for(const cell of cellsWithMines) {
+                        minesCount++
+                    }
+                    const cell = grid.cellByIndex(i);
+                    if(cell) {
+                        expect(minesCount).toBe(cell.surroundingMines);
+                    }
                       //isHavingGoodMinesIndication(_, i, refCell.surroundingMines)
-            })
-        })}
-)});
+                })
+        })
+    }
+)}
+);
